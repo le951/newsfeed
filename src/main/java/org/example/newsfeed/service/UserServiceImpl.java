@@ -15,7 +15,7 @@ public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
 
 	@Override
-	public SignUpResponseDto signup(SignUpRequestDto dto) {
+	public SignUpResponseDto signUp(SignUpRequestDto dto) {
 		User user = new User(dto.getNickname(), dto.getEmail(), dto.getPassword(), dto.getBirth());
 		User savedUser = userRepository.save(user);
 		return new SignUpResponseDto(savedUser.getNickname(), savedUser.getEmail());
