@@ -30,4 +30,10 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private LocalDate birth;
 
+    public User(String nickname, String email, String password, LocalDate birth) {
+        this.nickname = nickname;
+        this.email = email;
+        this.password = password;
+        this.birth = birth;
+    }
 }
