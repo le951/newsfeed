@@ -14,7 +14,7 @@ POST localhost:8080/users/signup
 Content-Type: application/json
 
 {
-  "nickname": "",
+  "nickname": "auth-test-nickname2",
   "password": "pw123123",
   "email": "authtes1t@examplleee.com",
   "birth": "2000-01-01"
@@ -32,18 +32,18 @@ Content-Type: application/json
 
 ###
 GET localhost:8080/test-auth/JwtValidationQuery?
-    token=eyJhbGciOiJIUzI1NiJ9.eyJuaWNrbmFtZSI6ImF1dGgtdGVzdC1uaWNrbmFtZSIsImlhdCI6MTc0NDEwMTE4MSwic3ViIjoiYXV0aHRlc3RAZXhhbXBsbGVlZS5jb20iLCJleHAiOjE3NDQxMDIzODEsInVzZXJJZCI6MX0.uWRLfp6EgD15szIW0iQEUZQGTI5b2oY3tbT39MBZr2g
+    token=eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3NDQxMDg4NTksInVzZXJJZCI6MSwibmlja25hbWUiOiJhdXRoLXRlc3Qtbmlja25hbWUiLCJpYXQiOjE3NDQxMDc2NTksInN1YiI6ImF1dGh0ZXN0QGV4YW1wbGxlZWUuY29tIn0.CvrOm7gdLEDggXHZwlq3Lg2zUY-xE2EOpB2eENnw4K0
 
 ### 
 GET localhost:8080/test-auth/JwtValidationHeader
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsImV4cCI6MTc0NDEwNTA3Mywic3ViIjoiYXV0aHRlc3RAZXhhbXBsbGVlZS5jb20iLCJpYXQiOjE3NDQxMDM4NzMsIm5pY2tuYW1lIjoiYXV0aC10ZXN0LW5pY2tuYW1lIn0.4m4tzdZ9n9JHr4o2dYYQ-wvMoTCSz79HP8ViOK7j32Q
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJuaWNrbmFtZSI6ImF1dGgtdGVzdC1uaWNrbmFtZSIsImlhdCI6MTc0NDEwODA5Miwic3ViIjoiYXV0aHRlc3RAZXhhbXBsbGVlZS5jb20iLCJleHAiOjE3NDQxMDkyOTIsInVzZXJJZCI6MX0.d6_YR299b0tqOP1htGc119Fj6WDhuyjV5M2mQORUetk
 
 ###
 GET localhost:8080/test-auth/JwtProperties
 
 ###
 GET localhost:8080/test-auth/JwtFilterTest
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsImV4cCI6MTc0NDEwNTA3Mywic3ViIjoiYXV0aHRlc3RAZXhhbXBsbGVlZS5jb20iLCJpYXQiOjE3NDQxMDM4NzMsIm5pY2tuYW1lIjoiYXV0aC10ZXN0LW5pY2tuYW1lIn0.4m4tzdZ9n9JHr4o2dYYQ-wvMoTCSz79HP8ViOK7j32Q
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJuaWNrbmFtZSI6ImF1dGgtdGVzdC1uaWNrbmFtZSIsImlhdCI6MTc0NDEwODA5Miwic3ViIjoiYXV0aHRlc3RAZXhhbXBsbGVlZS5jb20iLCJleHAiOjE3NDQxMDkyOTIsInVzZXJJZCI6MX0.d6_YR299b0tqOP1htGc119Fj6WDhuyjV5M2mQORUetk
 
 
 
