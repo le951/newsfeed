@@ -1,12 +1,16 @@
 package org.example.newsfeed.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.newsfeed.dto.board.BoardListDto;
+import org.example.newsfeed.dto.board.BoardPagingDto;
 import org.example.newsfeed.dto.board.BoardRequestDto;
 import org.example.newsfeed.dto.board.BoardResponseDto;
 import org.example.newsfeed.service.BoardService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,6 +57,26 @@ public class BoardController {
     return new ResponseEntity<>(boardResponseDto, HttpStatus.OK);
   }
 
+
+  // 게시물 단건 조회
+
+  // 게시물 전체 조회 -> 팔로우 한사람들만(구독중인 채널 가져오기 같은 느낌)
+
+  // 게시물 전체 조회 -> 모든 게시물중에서
+  @GetMapping
+  public Page<BoardListDto> findAllBoardsOfAllUsers(@PathVariable int pageNumber){
+
+
+    BoardPagingDto boardPagingDto = new BoardPagingDto();
+
+    boardPagingDto.setPage(pageNumber);
+
+    return boardService.findAllBoardsOfAllUsers(boardPagingDto);
+
+  }
+
+
+  // 게시물 삭제
   @DeleteMapping("/{boardId}")
   public ResponseEntity<Void> deleteBoard(
       @SessionAttribute(name = Const.LOGIN_USER, required = false)LoginResponseDto loginUser,

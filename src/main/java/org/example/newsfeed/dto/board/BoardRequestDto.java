@@ -1,8 +1,10 @@
 package org.example.newsfeed.dto.board;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class BoardRequestDto {
 
   private final String title;
@@ -10,9 +12,5 @@ public class BoardRequestDto {
   private final String contents;
 
 
-  public BoardRequestDto(String title, String contents) {
-    this.title = title;
-    this.contents = contents;
-  }
 }
 

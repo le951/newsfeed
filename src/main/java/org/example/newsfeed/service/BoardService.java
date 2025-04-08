@@ -2,6 +2,8 @@ package org.example.newsfeed.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.example.newsfeed.dto.board.BoardListDto;
+import org.example.newsfeed.dto.board.BoardPagingDto;
 import org.example.newsfeed.dto.board.BoardRequestDto;
 import org.example.newsfeed.dto.board.BoardResponseDto;
 import org.example.newsfeed.entity.Board;
@@ -9,6 +11,10 @@ import org.example.newsfeed.entity.User;
 import org.example.newsfeed.repository.BoardRepository;
 import org.example.newsfeed.repository.CommentRepository;
 import org.example.newsfeed.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +62,21 @@ public class BoardService {
 
   }
 
+  @Transactional(readOnly = true)
+  public Page<BoardListDto> findAllBoardsOfAllUsers(BoardPagingDto boardPagingDto) {
+
+    Sort sort = Sort.by(Sort.Direction.fromString(boardPagingDto.getSort()) ,"created_at");
+    Pageable pageable = PageRequest.of(boardPagingDto.getPage(), boardPagingDto.getSize(), sort);
+
+    Page<Board> boardPages = boardRepository.findAll(pageable);
+
+    Page<BoardListDto> boardListDtos = boardPages.map(boardPage -> new BoardListDto(boardPage.getUser().getNickname(),boardPage.getTitle(), boardPage.getCreatedAt()));
+
+    return boardListDtos;
+
+  }
+
+
   // 게시물 삭제
   @Transactional
   public void deleteBoard(Long userId, Long boardId) {
@@ -68,6 +89,8 @@ public class BoardService {
 
     boardRepository.delete(findBoard);
   }
+
+
 
 //  // token ver 게시물 생성
 //  public BoardResponseDto saveBoard(String token, BoardRequestDto requestDto){
