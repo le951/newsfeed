@@ -1,15 +1,10 @@
 package org.example.newsfeed.service;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
-
 import jakarta.validation.constraints.NotBlank;
 import org.example.newsfeed.dto.user.SignUpRequestDto;
 import org.example.newsfeed.dto.user.SignUpResponseDto;
 import org.example.newsfeed.dto.user.UserResponseDto;
-import org.example.newsfeed.entity.DeletedUser;
 import org.example.newsfeed.entity.User;
-import org.example.newsfeed.repository.DeletedUserRepository;
 import org.example.newsfeed.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -62,7 +57,6 @@ public class UserService {
 	}
 
 	public void delete(Long id, String password) {
-
 		User findUser = userRepository.findByIdOrElseThrow(id);
 
 		String userPassword = findUser.getPassword();
