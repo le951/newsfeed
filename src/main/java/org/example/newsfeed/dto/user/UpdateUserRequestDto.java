@@ -5,14 +5,12 @@ import lombok.Getter;
 @Getter
 public class UpdateUserRequestDto {
 
-	private final String oldNickname;
-	private final String newNickname;
+	private final String nickname;
 	private final String oldPassword;
 	private final String newPassword;
 
-	public UpdateUserRequestDto(String oldNickname, String newNickname, String oldPassword, String newPassword) {
-		this.oldNickname = oldNickname;
-		this.newNickname = newNickname;
+	public UpdateUserRequestDto(String nickname, String oldPassword, String newPassword) {
+		this.nickname = nickname;
 		this.oldPassword = oldPassword;
 		this.newPassword = newPassword;
 	}
