@@ -90,29 +90,4 @@ public class BoardService {
     boardRepository.delete(findBoard);
   }
 
-
-
-//  // token ver 게시물 생성
-//  public BoardResponseDto saveBoard(String token, BoardRequestDto requestDto){
-//    User findUser = userRepository.findByIdOrElseThrow(token.());
-//    Board board = new Board(requestDto.getTitle(), requestDto.getContents());
-//    board.setUser(findUser);
-//    Board savedBoard = boardRepository.save(board);
-//
-//    return new BoardResponseDto(
-//        board.getId(),
-//        board.getTitle(),
-//        board.getContents(),
-//        board.getCreatedAt()
-//    );
-//
-//  }
-//
-//  public Long getUserIdFromToken(String token){
-//    // 구현 필요
-//  }
-
-
-
-
 }
