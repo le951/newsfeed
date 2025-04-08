@@ -15,18 +15,16 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl {
 
 	private final UserRepository userRepository;
 
-	@Override
 	public SignUpResponseDto signUp(SignUpRequestDto dto) {
 		User user = new User(dto.getNickname(), dto.getEmail(), dto.getPassword(), dto.getBirth());
 		User savedUser = userRepository.save(user);
 		return new SignUpResponseDto(savedUser.getNickname(), savedUser.getEmail());
 	}
 
-	@Override
 	public UserResponseDto findByNickname(String nickname) {
 		Optional<User> optionalUser = userRepository.findByNickname(nickname);
 		if(optionalUser.isEmpty()) {
@@ -36,7 +34,6 @@ public class UserServiceImpl implements UserService {
 		return new UserResponseDto(findUser.getNickname(), findUser.getEmail());
 	}
 
-	@Override
 	public UserResponseDto findByEmail(String email) {
 		Optional<User> optionalUser = userRepository.findByEmail(email);
 		if(optionalUser.isEmpty()) {
