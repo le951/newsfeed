@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping
 @RequiredArgsConstructor
 public class CommentController {
 
@@ -19,7 +18,7 @@ public class CommentController {
 
     //댓글 작성 기능
     @PostMapping("/newsfeeds/{newsfeedsId}/comments")
-    public ResponseEntity<Void> saveComment(
+    public ResponseEntity<String> saveComment(
             @PathVariable Long newsfeedsId,
 //            HttpServletRequest httpServletRequest,
             @Valid @RequestBody CommentRequestDto requsetDto
@@ -35,12 +34,26 @@ public class CommentController {
         localhost:8080/newsfeeds/1/comments
 
         {
-            "comments" : "댓글3"
+        "comments" : "댓글3"
         }
 
          */
-        CommentResponseDto responseDto = commentService.saveComment(newsfeedsId,1L,requsetDto);
+        commentService.saveComment(newsfeedsId,1L,requsetDto);
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>("댓글 작성 완료",HttpStatus.CREATED);
     }
+    //댓글 수정 기능
+    //Response 메세지는 임시 - 후에 논의 후 수정
+    @PatchMapping("/comments/{id}")
+    public ResponseEntity<String> updateComment(
+            @PathVariable Long id,
+    //       HttpServletRequest httpServletRequest,
+            @Valid @RequestBody CommentRequestDto requestDto
+    ){
+    //        LoginResponseDto loginUser = (LoginResponseDto) httpServletRequest.getSession().getAttribute(Const.LOGIN_USER);
+       commentService.updateComment(id,1L, requestDto);
+
+       return new ResponseEntity<>("댓글 수정 완료", HttpStatus.OK);
+    }
+
 }

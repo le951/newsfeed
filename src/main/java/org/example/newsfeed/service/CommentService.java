@@ -24,18 +24,31 @@ public class CommentService {
 
     //댓글 작성 기능
     @Transactional
-    public CommentResponseDto saveComment(Long newsfeedsId, Long userId, CommentRequestDto requestDto){
+    public void saveComment(Long newsfeedsId, Long userId, CommentRequestDto requestDto){
 
         //해당 게시글, 작성자 관련 데이터 호출
         //관련 예외 추가되면 수정할 예정
-        User user = userRepository.findById(userId)
-                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"존재하지 않는 회원입니다."));
+        User user = userRepository.findByIdOrElseThrow(userId);
         Board board = boardRepository.findById(newsfeedsId)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"존재하지 않는 게시글입니다."));;
 
         Comment comment = new Comment(user, board,requestDto.getComments());
-        Comment savedComment = commentRepository.save(comment);
+        commentRepository.save(comment);
 
-        return CommentResponseDto.toDto(savedComment);
+    }
+
+    //댓글 수정 기능
+    @Transactional
+    public void updateComment(Long commentId,Long loginUserId,CommentRequestDto requestDto) {
+        //id값에 해당하는 댓글 데이터 가져오기
+        Comment savedComment = commentRepository.findByIdOrElseThrow(commentId);
+
+        //로그인한 유저와 댓글 작성자가 동일하지 않을 경우 에러 출력
+        if(!loginUserId.equals(savedComment.getUser().getId())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"작성자만 댓글을 수정할 수 있습니다.");
+        }
+
+        savedComment.updateComment(requestDto.getComments());
+
     }
 }
