@@ -1,9 +1,11 @@
 package org.example.newsfeed.test.controller;
 
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import org.example.newsfeed.common.config.JwtProperties;
+import org.example.newsfeed.common.jwt.JwtProperties;
 import org.example.newsfeed.common.config.PasswordEncoder;
+import org.example.newsfeed.common.jwt.JwtUtil;
 import org.example.newsfeed.entity.User;
 import org.example.newsfeed.repository.UserRepository;
 import org.example.newsfeed.test.service.AuthTestService;
@@ -27,11 +29,14 @@ public class AuthTestController {
 
     private final JwtProperties jwtProperties;
 
+    private final JwtUtil jwtUtil;
+
     private final PasswordEncoder passwordEncoder = new PasswordEncoder();
-    AuthTestController(AuthTestService authTestService, UserRepository userRepository, JwtProperties jwtProperties){
+    AuthTestController(AuthTestService authTestService, UserRepository userRepository, JwtProperties jwtProperties, JwtUtil jwtUtil){
         this.authTestService = authTestService;
         this.userRepository = userRepository;
         this.jwtProperties = jwtProperties;
+        this.jwtUtil = jwtUtil;
     }
 
 
@@ -71,7 +76,7 @@ public class AuthTestController {
     @Profile("dev")
     @Transactional
     @PostMapping("/login")
-    public ResponseEntity<?> login(
+    public ResponseEntity<String> login(
             @RequestBody Map<String, Object> request,
             HttpSession session
     ){
@@ -92,18 +97,63 @@ public class AuthTestController {
 
         // Login 성공 시
 
+        String token = jwtUtil.generateAccessToken(user.getId(), user.getNickname(), user.getEmail());
 
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(token, HttpStatus.OK);
     }
+
+    @Profile("dev")
+    @Transactional
+    @GetMapping("/JwtValidationQuery")
+    public ResponseEntity<?> jwtValidation(
+            @RequestParam String token
+    ){
+
+        return ResponseEntity.status(HttpStatus.OK).body(jwtUtil.validateAccessToken(token));
+    }
+
+    @Profile("dev")
+    @Transactional
+    @GetMapping("/JwtValidationHeader")
+    public ResponseEntity<?> jwtValidation(
+            HttpServletRequest request
+    ){
+        String authHeader = request.getHeader("Authorization");
+
+        if (authHeader == null || !authHeader.startsWith("Bearer "))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token Not Found");
+
+        String token = authHeader.substring(7);
+
+        return ResponseEntity.status(HttpStatus.OK).body(jwtUtil.validateAccessToken(token));
+    }
+
 
 
     @Profile("dev")
     @Transactional
     @GetMapping("/JwtProperties")
-    public ResponseEntity<?> JwtProperties(){
+    public ResponseEntity<?> jwtProperties(){
 
         return ResponseEntity.status(HttpStatus.OK).body(jwtProperties.getSecretKey());
     }
+
+    @Profile("dev")
+    @Transactional
+    @GetMapping("/JwtFilterTest")
+    public ResponseEntity<?> jwtFilterTest(
+            HttpServletRequest request
+    ){
+
+        if(request.getAttribute("userInfo")==null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token NotFound. (expired, validation error, not entered)");
+
+        StringBuilder st = new StringBuilder();
+
+        Map<String, Object> userInfo = (Map<String, Object>) request.getAttribute("userInfo");
+
+        return ResponseEntity.status(HttpStatus.OK).body(userInfo);
+    }
+
 
 }
