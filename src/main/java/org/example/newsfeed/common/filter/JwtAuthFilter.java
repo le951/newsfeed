@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.example.newsfeed.common.jwt.JwtUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,6 +25,7 @@ import java.util.Map;
 // 필요한 경우 Controller / Service 에서 400번대 Response 처리
 // request.getAttribute("userInfo") == null
 //  => 로그인 되어있지 않음.
+@Slf4j
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
@@ -35,11 +37,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
         String authHeader = request.getHeader("Authorization");
+
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")){
             filterChain.doFilter(request, response);
+            return;
         }
 
         String token = authHeader.substring(7);
@@ -49,11 +52,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if(claims.isEmpty())
             filterChain.doFilter(request, response);
 
-        request.setAttribute("userInfo",Map.of(
-                "userId", claims.get("userId"),
-                "nickname", claims.get("nickname"),
-                "email", claims.get("email")
-        ));
+        request.setAttribute("userId", claims.get("userId"));
+        request.setAttribute("nickname", claims.get("nickname"));
+        request.setAttribute("email", claims.get("email"));
 
 
         filterChain.doFilter(request, response);

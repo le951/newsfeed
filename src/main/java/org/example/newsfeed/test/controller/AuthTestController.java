@@ -2,7 +2,6 @@ package org.example.newsfeed.test.controller;
 
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import org.example.newsfeed.common.jwt.JwtProperties;
 import org.example.newsfeed.common.config.PasswordEncoder;
 import org.example.newsfeed.common.jwt.JwtUtil;
@@ -45,8 +44,7 @@ public class AuthTestController {
     @Transactional
     @PostMapping("/create-user")
     public ResponseEntity<?> createUser(
-            @RequestBody Map<String, Object> request,
-            HttpSession session
+            @RequestBody Map<String, Object> request
             ){
 
         String nickname = (String) request.get("nickname");
@@ -77,8 +75,7 @@ public class AuthTestController {
     @Transactional
     @PostMapping("/login")
     public ResponseEntity<String> login(
-            @RequestBody Map<String, Object> request,
-            HttpSession session
+            @RequestBody Map<String, Object> request
     ){
 
         String password = (String) request.get("password");
@@ -145,14 +142,19 @@ public class AuthTestController {
             HttpServletRequest request
     ){
 
-        if(request.getAttribute("userInfo")==null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token NotFound. (expired, validation error, not entered)");
+        if(request.getAttribute("userId")==null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Token NotFound. (expired, validation error, not entered)");
+        }
 
         StringBuilder st = new StringBuilder();
 
-        Map<String, Object> userInfo = (Map<String, Object>) request.getAttribute("userInfo");
+        st.append(request.getAttribute("userId")).append("\n")
+                .append(request.getAttribute("email")).append("\n")
+                .append(request.getAttribute("nickname"));
 
-        return ResponseEntity.status(HttpStatus.OK).body(userInfo);
+
+        return ResponseEntity.status(HttpStatus.OK).body(st);
     }
 
 
