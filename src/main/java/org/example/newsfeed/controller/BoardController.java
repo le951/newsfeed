@@ -1,6 +1,8 @@
 package org.example.newsfeed.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.example.newsfeed.common.jwt.JwtUtil;
 import org.example.newsfeed.dto.board.BoardListDto;
 import org.example.newsfeed.dto.board.BoardPagingDto;
 import org.example.newsfeed.dto.board.BoardRequestDto;
@@ -17,7 +19,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.SessionAttribute;
 
 @RestController
 @RequestMapping("/boards")
@@ -25,18 +26,22 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 public class BoardController {
 
   private final BoardService boardService;
+  private final JwtUtil jwtUtil;
 
-  // session 사용해서 로그인한 경우
+  // token 사용해서 로그인한 경우
   // 게시물 생성 로직
+  // 필터에서 토큰 검증이 있다는 가정하에 토큰 검증 진행 x
   @PostMapping
   public ResponseEntity<BoardResponseDto> saveBoard(
       @RequestBody BoardRequestDto requestDto,
-      @SessionAttribute(name = Const.LOGIN_USER, required = false) LoginResposneDto loginUser
+      HttpServletRequest request
   ){
 
-    BoardResponseDto boardResponseDto = boardService.saveBoard(loginUser.getId(), requestDto);
+    Long userId = (Long) request.getAttribute("userId");
 
-    return new ResponseEntity<>(boardResponseDto, HttpStatus.CREATED);
+    BoardResponseDto boardResponseDto = boardService.saveBoard(userId, requestDto);
+
+    return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
   // 게시물 수정
@@ -44,12 +49,14 @@ public class BoardController {
   public ResponseEntity<BoardResponseDto> updateBoard(
       @PathVariable Long boardId,
       @RequestBody BoardRequestDto requestDto,
-      @SessionAttribute(name = Const.LOGIN_USER, required = false) LoginResposneDto loginUser
+      HttpServletRequest request
   ){
+
+    Long userId = (Long) request.getAttribute("userId");
 
     BoardResponseDto boardResponseDto =
         boardService.updateBoard(
-            loginUser.getId(),
+            userId,
             boardId,
             requestDto
         );
@@ -75,34 +82,18 @@ public class BoardController {
 
   }
 
-
   // 게시물 삭제
   @DeleteMapping("/{boardId}")
   public ResponseEntity<Void> deleteBoard(
-      @SessionAttribute(name = Const.LOGIN_USER, required = false)LoginResponseDto loginUser,
+      HttpServletRequest request,
       @PathVariable Long boardId
   ){
 
-    boardService.deleteBoard(loginUser.getId(),boardId);
+    Long userId = (Long) request.getAttribute("userId");
+
+    boardService.deleteBoard(userId,boardId);
 
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-
-//  // token 사용해서 로그인한 경우
-//  // 게시물 생성 로직
-//  // 필터에서 토큰 검증이 있다는 가정하에 토큰 검증 진행 x
-//  @PostMapping
-//  public ResponseEntity<BoardResponseDto> saveBoard(
-//      @RequestBody BoardRequestDto requestDto,
-//      @RequestHeader(value = "Authorization", required = false) String bearerToken
-//  ){
-//
-//    // token 앞단에 Bearer 부분 없애기
-//    String token = bearerToken.substring(7);
-//
-//    BoardResponseDto boardResponseDto = boardService.saveBoard(token, requestDto);
-//
-//    return new ResponseEntity<>(HttpStatus.CREATED);
-//  }
 }
