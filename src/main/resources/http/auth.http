@@ -1,0 +1,31 @@
+###
+POST localhost:8080/test-auth/create-user
+Content-Type: application/json
+
+{
+  "nickname": "auth-test-nickname",
+  "password": "pw123123",
+  "email": "authtest@examplleee.com",
+  "birth": "2000-01-01"
+}
+
+###
+POST localhost:8080/users/signup
+Content-Type: application/json
+
+{
+  "nickname": "",
+  "password": "pw123123",
+  "email": "authtes1t@examplleee.com",
+  "birth": "2000-01-01"
+}
+
+
+###
+POST localhost:8080/test-auth/login
+Content-Type: application/json
+
+{
+  "email" : "authtest@examplleee.com",
+  "password" : "pw123123"
+}
