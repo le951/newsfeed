@@ -1,5 +1,6 @@
 package org.example.newsfeed.controller;
 
+import org.example.newsfeed.dto.user.DeleteUserRequestDto;
 import org.example.newsfeed.dto.user.SignUpRequestDto;
 import org.example.newsfeed.dto.user.SignUpResponseDto;
 import org.example.newsfeed.dto.user.UpdateUserRequestDto;
@@ -44,6 +45,14 @@ public class UserController {
 		} else {
 			return ResponseEntity.badRequest().build();
 		}
+	}
+
+	@DeleteMapping("/{id}")
+	private ResponseEntity<Void> deleteUser(@PathVariable Long id, @RequestBody DeleteUserRequestDto dto) {
+
+		userService.delete(id, dto.getPassword());
+
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@PatchMapping
