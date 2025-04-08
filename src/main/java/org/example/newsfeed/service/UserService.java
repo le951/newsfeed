@@ -73,4 +73,20 @@ public class UserService {
 
 		userRepository.delete(findUser);
 	}
+
+	public void delete(Long id, String password) {
+
+		User findUser = userRepository.findByIdOrElseThrow(id);
+
+		String userPassword = findUser.getPassword();
+
+		if (!userPassword.equals(password)) {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "잘못된 비밀번호");
+		}
+
+		DeletedUser deletedUser = new DeletedUser(findUser, LocalDateTime.now());
+		deletedUserRepository.save(deletedUser);
+
+		userRepository.delete(findUser);
+	}
 }
