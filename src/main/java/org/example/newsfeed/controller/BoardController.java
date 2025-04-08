@@ -6,6 +6,7 @@ import org.example.newsfeed.dto.board.BoardResponseDto;
 import org.example.newsfeed.service.BoardService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,6 +51,17 @@ public class BoardController {
         );
 
     return new ResponseEntity<>(boardResponseDto, HttpStatus.OK);
+  }
+
+  @DeleteMapping("/{boardId}")
+  public ResponseEntity<Void> deleteBoard(
+      @SessionAttribute(name = Const.LOGIN_USER, required = false)LoginResponseDto loginUser,
+      @PathVariable Long boardId
+  ){
+
+    boardService.deleteBoard(loginUser.getId(),boardId);
+
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
 
