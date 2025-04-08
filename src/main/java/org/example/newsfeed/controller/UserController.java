@@ -2,6 +2,7 @@ package org.example.newsfeed.controller;
 
 import org.example.newsfeed.dto.user.SignUpRequestDto;
 import org.example.newsfeed.dto.user.SignUpResponseDto;
+import org.example.newsfeed.dto.user.UpdateUserRequestDto;
 import org.example.newsfeed.dto.user.UserResponseDto;
 import org.example.newsfeed.dto.user.UpdatePasswordRequestDto;
 import org.example.newsfeed.service.UserService;
@@ -51,4 +52,5 @@ public class UserController {
 		userService.updatePassword(id, dto.getOldPassword(), dto.getNewPassword());
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
+
 }

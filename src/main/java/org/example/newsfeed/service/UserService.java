@@ -2,9 +2,7 @@ package org.example.newsfeed.service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotBlank;
+import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.dto.user.SignUpRequestDto;
 import org.example.newsfeed.dto.user.SignUpResponseDto;
 import org.example.newsfeed.dto.user.UserResponseDto;
@@ -16,8 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
-import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -51,12 +47,15 @@ public class UserService {
 	}
 
 	@Transactional
-	public void updatePassword(Long id, String oldPassword, String newPassword) {
-		User findUser = userRepository.findByIdOrElseThrow(id);
-		if(!findUser.getPassword().equals(oldPassword)) {
+	public void updatePassword(String nickname, String oldPassword, String newPassword) {
+		Optional<User> optionalUser = userRepository.findByNickname(nickname);
+		if(optionalUser.isEmpty()) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, nickname + "은 존재하지 않는 회원입니다.");
+		}
+		if(!optionalUser.get().getPassword().equals(oldPassword)) {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");
 		}
-		findUser.updatePassword(newPassword);
+		optionalUser.get().updateUser(newPassword);
 	}
 
 	public void delete(Long id, String password) {
