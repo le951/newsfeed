@@ -2,6 +2,7 @@ package org.example.newsfeed.test.controller;
 
 
 import jakarta.servlet.http.HttpSession;
+import org.example.newsfeed.common.config.JwtProperties;
 import org.example.newsfeed.common.config.PasswordEncoder;
 import org.example.newsfeed.entity.User;
 import org.example.newsfeed.repository.UserRepository;
@@ -24,10 +25,13 @@ public class AuthTestController {
 
     private final UserRepository userRepository;
 
+    private final JwtProperties jwtProperties;
+
     private final PasswordEncoder passwordEncoder = new PasswordEncoder();
-    AuthTestController(AuthTestService authTestService, UserRepository userRepository){
+    AuthTestController(AuthTestService authTestService, UserRepository userRepository, JwtProperties jwtProperties){
         this.authTestService = authTestService;
         this.userRepository = userRepository;
+        this.jwtProperties = jwtProperties;
     }
 
 
@@ -83,11 +87,23 @@ public class AuthTestController {
         if(user == null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found by email");
 
-        // Login 성공 가정.
-        // Service 에서 (Long id) 만 반환하여 Session 에 등록.
-        session.setAttribute("userId", user.getId());
+        if(!passwordEncoder.matches(password, user.getPassword()))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Password not same");
+
+        // Login 성공 시
+
+
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    @Profile("dev")
+    @Transactional
+    @GetMapping("/JwtProperties")
+    public ResponseEntity<?> JwtProperties(){
+
+        return ResponseEntity.status(HttpStatus.OK).body(jwtProperties.getSecretKey());
     }
 
 }

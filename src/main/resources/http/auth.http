@@ -29,3 +29,18 @@ Content-Type: application/json
   "email" : "authtest@examplleee.com",
   "password" : "pw123123"
 }
+
+###
+GET localhost:8080/test-auth/JwtProperties
+
+
+
+
+
+
+
+
+
+
+
+
