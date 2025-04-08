@@ -27,4 +27,9 @@ public class Comment extends BaseEntity{
     @NotBlank(message = "댓글 내용이 비어있습니다")
     private String comments;
 
+    public Comment(User user, Board board,String comments){
+    this.user = user;
+    this.board = board;
+    this.comments = comments;
+    }
 }
