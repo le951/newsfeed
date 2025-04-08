@@ -16,6 +16,4 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("요청 또는 서버에 문제가 있습니다.");
     }
-
-
 }
