@@ -3,8 +3,6 @@ package org.example.newsfeed.service;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotBlank;
 import org.example.newsfeed.dto.user.SignUpRequestDto;
 import org.example.newsfeed.dto.user.SignUpResponseDto;
 import org.example.newsfeed.dto.user.UserResponseDto;
@@ -38,7 +36,7 @@ public class UserService {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, nickname + "은 존재하지 않는 회원입니다.");
 		}
 		User findUser = optionalUser.get();
-		return new UserResponseDto(findUser.getNickname(), findUser.getEmail());
+		return new UserResponseDto(findUser.getId(), findUser.getNickname(), findUser.getEmail());
 	}
 
 	public UserResponseDto findByEmail(String email) {
@@ -47,7 +45,7 @@ public class UserService {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, email + "은 존재하지 않는 회원입니다.");
 		}
 		User findUser = optionalUser.get();
-		return new UserResponseDto(findUser.getNickname(), findUser.getEmail());
+		return new UserResponseDto(findUser.getId(), findUser.getNickname(), findUser.getEmail());
 	}
 
 	@Transactional
