@@ -1,11 +1,13 @@
 package org.example.newsfeed.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.dto.board.BoardRequestDto;
 import org.example.newsfeed.dto.board.BoardResponseDto;
 import org.example.newsfeed.entity.Board;
 import org.example.newsfeed.entity.User;
 import org.example.newsfeed.repository.BoardRepository;
+import org.example.newsfeed.repository.CommentRepository;
 import org.example.newsfeed.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +18,7 @@ public class BoardService {
 
   private final BoardRepository boardRepository;
   private final UserRepository userRepository;
+  private final CommentRepository commentRepository;
 
   // session버전 게시물 생성
   public BoardResponseDto saveBoard(Long userId, BoardRequestDto requestDto){
@@ -51,6 +54,16 @@ public class BoardService {
         findBoard.getCreatedAt()
     );
 
+  }
+
+  @Transactional
+  public void deleteBoard(Long userId, Long boardId) {
+    Board findBoard = boardRepository.findByUserIdAndIdOrElseThrow(userId,boardId);
+    List<Board> findBoardList = commentRepository.findAllByBoardId(findBoard.getId());
+
+    commentRepository.deleteAll(findBoardList);
+
+    boardRepository.delete(findBoard);
   }
 
 //  // token ver 게시물 생성
