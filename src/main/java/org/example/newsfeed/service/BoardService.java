@@ -75,7 +75,7 @@ public class BoardService {
 
   }
 
-
+  // 세영님꺼랑 합치면 오류 안날지도
 //  // 게시물 삭제
 //  @Transactional
 //  public void deleteBoard(Long userId, Long boardId) {
