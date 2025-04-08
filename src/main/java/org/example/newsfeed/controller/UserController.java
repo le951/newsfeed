@@ -4,6 +4,7 @@ import org.example.newsfeed.dto.user.SignUpRequestDto;
 import org.example.newsfeed.dto.user.SignUpResponseDto;
 import org.example.newsfeed.dto.user.UpdateUserRequestDto;
 import org.example.newsfeed.dto.user.UserResponseDto;
+import org.example.newsfeed.dto.user.UpdatePasswordRequestDto;
 import org.example.newsfeed.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,9 +47,9 @@ public class UserController {
 		}
 	}
 
-	@PatchMapping
-	public ResponseEntity<Void> updatePassword(@RequestBody UpdateUserRequestDto dto) {
-		userService.updatePassword(dto.getNickname(), dto.getOldPassword(), dto.getNewPassword());
+	@PatchMapping("/{id}")
+	public ResponseEntity<Void> updatePassword(@PathVariable Long id, @RequestBody UpdatePasswordRequestDto dto) {
+		userService.updatePassword(id, dto.getOldPassword(), dto.getNewPassword());
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
