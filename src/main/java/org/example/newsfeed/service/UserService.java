@@ -1,17 +1,19 @@
 package org.example.newsfeed.service;
 
-import jakarta.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.dto.user.SignUpRequestDto;
 import org.example.newsfeed.dto.user.SignUpResponseDto;
 import org.example.newsfeed.dto.user.UserResponseDto;
+import org.example.newsfeed.entity.DeletedUser;
 import org.example.newsfeed.entity.User;
+import org.example.newsfeed.repository.DeletedUserRepository;
 import org.example.newsfeed.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
-import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
