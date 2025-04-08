@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
 
+@Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
   Optional<Board> findByUserIdAndId(Long userId, Long id);
