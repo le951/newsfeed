@@ -11,14 +11,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/newsfeeds/{newsfeedsId}/comments")
+@RequestMapping
 @RequiredArgsConstructor
 public class CommentController {
 
     private final CommentService commentService;
 
     //댓글 작성 기능
-    @PostMapping
+    @PostMapping("/newsfeeds/{newsfeedsId}/comments")
     public ResponseEntity<Void> saveComment(
             @PathVariable Long newsfeedsId,
 //            HttpServletRequest httpServletRequest,
@@ -35,7 +35,7 @@ public class CommentController {
         localhost:8080/newsfeeds/1/comments
 
         {
-        "comments" : "댓글3"
+            "comments" : "댓글3"
         }
 
          */
