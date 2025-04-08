@@ -9,13 +9,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception e){
         log.error(e.toString());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("요청 또는 서버에 문제가 있습니다.");
     }
-
-
 }
