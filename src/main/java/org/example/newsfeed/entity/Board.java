@@ -24,4 +24,18 @@ public class Board extends BaseEntity{
     @ManyToOne
     private User user;
 
+    public Board(String title, String contents){
+        this.title = title;
+        this.contents = contents;
+    }
+
+    public void updateBoard(String title, String contents){
+        this.title = title;
+        this.contents = contents;
+    }
+
+
+    public void setUser(User user){
+        this.user = user;
+    }
 }
