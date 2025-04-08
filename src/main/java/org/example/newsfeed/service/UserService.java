@@ -8,6 +8,6 @@ import org.springframework.stereotype.Service;
 @Service
 public interface UserService {
 	SignUpResponseDto signUp(SignUpRequestDto dto);
-	UserResponseDto findByNickname(String name);
+	UserResponseDto findByNickname(String nickname);
 	UserResponseDto findByEmail(String email);
 }
