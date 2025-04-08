@@ -1,17 +1,14 @@
 package org.example.newsfeed.controller;
 
+import org.example.newsfeed.dto.user.DeleteUserRequestDto;
 import org.example.newsfeed.dto.user.SignUpRequestDto;
 import org.example.newsfeed.dto.user.SignUpResponseDto;
 import org.example.newsfeed.dto.user.UserResponseDto;
+import org.example.newsfeed.dto.user.UpdatePasswordRequestDto;
 import org.example.newsfeed.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,5 +38,19 @@ public class UserController {
 		} else {
 			return ResponseEntity.badRequest().build();
 		}
+	}
+
+	@PatchMapping("/{id}")
+	public ResponseEntity<Void> updatePassword(@PathVariable Long id, @RequestBody UpdatePasswordRequestDto dto) {
+		userService.updatePassword(id, dto.getOldPassword(), dto.getNewPassword());
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@DeleteMapping("/{id}")
+	private ResponseEntity<Void> deleteUser(@PathVariable Long id, @RequestBody DeleteUserRequestDto dto) {
+
+		userService.delete(id, dto.getPassword());
+
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }
