@@ -46,9 +46,9 @@ public class UserController {
 		}
 	}
 
-	@PatchMapping("/{id}")
-	public ResponseEntity<Void> updateUser(@PathVariable Long id, @RequestBody UpdateUserRequestDto dto) {
-		userService.updateUser(id, dto.getOldNickname(), dto.getNewNickname(), dto.getOldPassword(), dto.getNewPassword());
+	@PatchMapping
+	public ResponseEntity<Void> updatePassword(@RequestBody UpdateUserRequestDto dto) {
+		userService.updatePassword(dto.getNickname(), dto.getOldPassword(), dto.getNewPassword());
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }
