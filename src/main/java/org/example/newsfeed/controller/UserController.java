@@ -2,11 +2,14 @@ package org.example.newsfeed.controller;
 
 import org.example.newsfeed.dto.user.SignUpRequestDto;
 import org.example.newsfeed.dto.user.SignUpResponseDto;
+import org.example.newsfeed.dto.user.UpdateUserRequestDto;
 import org.example.newsfeed.dto.user.UserResponseDto;
 import org.example.newsfeed.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,5 +44,11 @@ public class UserController {
 		} else {
 			return ResponseEntity.badRequest().build();
 		}
+	}
+
+	@PatchMapping("/{id}")
+	public ResponseEntity<Void> updateUser(@PathVariable Long id, @RequestBody UpdateUserRequestDto dto) {
+		userService.updateUser(id, dto.getOldNickname(), dto.getNewNickname(), dto.getOldPassword(), dto.getNewPassword());
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }
