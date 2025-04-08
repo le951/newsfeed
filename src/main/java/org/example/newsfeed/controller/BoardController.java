@@ -11,7 +11,6 @@ import org.example.newsfeed.service.BoardService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -81,19 +80,19 @@ public class BoardController {
     return boardService.findAllBoardsOfAllUsers(boardPagingDto);
 
   }
-
-  // 게시물 삭제
-  @DeleteMapping("/{boardId}")
-  public ResponseEntity<Void> deleteBoard(
-      HttpServletRequest request,
-      @PathVariable Long boardId
-  ){
-
-    Long userId = (Long) request.getAttribute("userId");
-
-    boardService.deleteBoard(userId,boardId);
-
-    return new ResponseEntity<>(HttpStatus.OK);
-  }
+// 세영님꺼랑 합치면 풀어오
+//  // 게시물 삭제
+//  @DeleteMapping("/{boardId}")
+//  public ResponseEntity<Void> deleteBoard(
+//      HttpServletRequest request,
+//      @PathVariable Long boardId
+//  ){
+//
+//    Long userId = (Long) request.getAttribute("userId");
+//
+//    boardService.deleteBoard(userId,boardId);
+//
+//    return new ResponseEntity<>(HttpStatus.OK);
+//  }
 
 }
