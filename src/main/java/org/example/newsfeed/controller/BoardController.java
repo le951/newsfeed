@@ -3,6 +3,7 @@ package org.example.newsfeed.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.dto.board.BoardRequestDto;
 import org.example.newsfeed.dto.board.BoardResponseDto;
+import org.example.newsfeed.service.BoardService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
