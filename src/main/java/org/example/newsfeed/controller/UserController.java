@@ -3,6 +3,7 @@ package org.example.newsfeed.controller;
 import org.example.newsfeed.dto.user.DeleteUserRequestDto;
 import org.example.newsfeed.dto.user.SignUpRequestDto;
 import org.example.newsfeed.dto.user.SignUpResponseDto;
+import org.example.newsfeed.dto.user.UpdateNicknameRequestDto;
 import org.example.newsfeed.dto.user.UserResponseDto;
 import org.example.newsfeed.dto.user.UpdatePasswordRequestDto;
 import org.example.newsfeed.service.UserService;
@@ -38,9 +39,15 @@ public class UserController {
 		}
 	}
 
-	@PatchMapping("/{id}")
+	@PatchMapping("/{id}/password")
 	public ResponseEntity<Void> updatePassword(@PathVariable Long id, @RequestBody UpdatePasswordRequestDto dto) {
 		userService.updatePassword(id, dto.getOldPassword(), dto.getNewPassword());
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@PatchMapping("/{id}/nickname")
+	public ResponseEntity<Void> updateNickname(@PathVariable Long id, @RequestBody UpdateNicknameRequestDto dto) {
+		userService.updateNickname(id, dto.getNickname());
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
