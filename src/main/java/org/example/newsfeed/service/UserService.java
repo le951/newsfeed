@@ -2,6 +2,7 @@ package org.example.newsfeed.service;
 
 import java.util.Optional;
 
+import jakarta.validation.constraints.NotBlank;
 import org.example.newsfeed.dto.user.SignUpRequestDto;
 import org.example.newsfeed.dto.user.SignUpResponseDto;
 import org.example.newsfeed.dto.user.UserResponseDto;
@@ -55,5 +56,4 @@ public class UserService {
 		}
 		optionalUser.get().updateUser(newPassword);
 	}
-
 }
