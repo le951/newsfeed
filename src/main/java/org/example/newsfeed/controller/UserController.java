@@ -8,14 +8,7 @@ import org.example.newsfeed.dto.user.UserResponseDto;
 import org.example.newsfeed.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +40,12 @@ public class UserController {
 		}
 	}
 
+	@PatchMapping
+	public ResponseEntity<Void> updatePassword(@RequestBody UpdateUserRequestDto dto) {
+		userService.updatePassword(dto.getNickname(), dto.getOldPassword(), dto.getNewPassword());
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
 	@DeleteMapping("/{id}")
 	private ResponseEntity<Void> deleteUser(@PathVariable Long id, @RequestBody DeleteUserRequestDto dto) {
 
@@ -55,9 +54,4 @@ public class UserController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
-	@PatchMapping
-	public ResponseEntity<Void> updatePassword(@RequestBody UpdateUserRequestDto dto) {
-		userService.updatePassword(dto.getNickname(), dto.getOldPassword(), dto.getNewPassword());
-		return new ResponseEntity<>(HttpStatus.OK);
-	}
 }
