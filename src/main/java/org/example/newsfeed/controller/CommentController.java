@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/newsfeeds/{newsfeedsId}/comments")
 @RequiredArgsConstructor
 public class CommentController {
 
@@ -46,13 +45,11 @@ public class CommentController {
     //Response 메세지는 임시 - 후에 논의 후 수정
     @PatchMapping("/comments/{commentsId}")
     public ResponseEntity<String> updateComment(
-            @PathVariable Long id,
             @PathVariable Long commmetsId,
             //HttpServletRequest httpServletRequest,
             @Valid @RequestBody CommentRequestDto requestDto
     ) {
         //LoginResponseDto loginUser = (LoginResponseDto) httpServletRequest.getSession().getAttribute(Const.LOGIN_USER);
-        commentService.updateComment(id, 1L, requestDto);
         commentService.updateComment(commmetsId, 1L, requestDto);
 
         return new ResponseEntity<>("댓글 수정 완료", HttpStatus.OK);
