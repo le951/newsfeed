@@ -56,11 +56,14 @@ public class BoardService {
 
   }
 
+  // 게시물 삭제
   @Transactional
   public void deleteBoard(Long userId, Long boardId) {
     Board findBoard = boardRepository.findByUserIdAndIdOrElseThrow(userId,boardId);
     List<Board> findBoardList = commentRepository.findAllByBoardId(findBoard.getId());
 
+    // 둘이 외래키로 연결됨
+    // 게시글 삭제할 때 댓글 다 삭제 해줘야함
     commentRepository.deleteAll(findBoardList);
 
     boardRepository.delete(findBoard);
