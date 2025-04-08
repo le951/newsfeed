@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.Map;
+import java.util.Optional;
 
 @Profile("dev")
 @RestController
@@ -37,7 +38,6 @@ public class AuthTestController {
         this.jwtProperties = jwtProperties;
         this.jwtUtil = jwtUtil;
     }
-
 
 
     @Profile("dev")
@@ -84,17 +84,17 @@ public class AuthTestController {
         if(password.isBlank() || email.isBlank())
             return ResponseEntity.badRequest().body("Some Body is Blank.");
 
-        User user = userRepository.findByEmail(email);
+        Optional<User> user = userRepository.findByEmail(email);
 
         if(user == null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found by email");
 
-        if(!passwordEncoder.matches(password, user.getPassword()))
+        if(!passwordEncoder.matches(password, user.get().getPassword()))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Password not same");
 
         // Login 성공 시
 
-        String token = jwtUtil.generateAccessToken(user.getId(), user.getNickname(), user.getEmail());
+        String token = jwtUtil.generateAccessToken(user.get().getId(), user.get().getNickname(), user.get().getEmail());
 
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
