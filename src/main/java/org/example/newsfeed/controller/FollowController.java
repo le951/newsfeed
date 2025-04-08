@@ -8,6 +8,7 @@ import org.example.newsfeed.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/follows")
@@ -25,20 +26,10 @@ public class FollowController {
 
         Long tempId = 1L;
 
-        UserResponseDto findUser;
-
-        if (nickname != null) {
-            findUser = userService.findByNickname(nickname);
-        } else if (email != null) {
-            findUser = userService.findByEmail(email);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        UserResponseDto findUser = checkEmailOrNickname(nickname, email);
 
         // 자기 자신을 팔로우 불가
-        if (findUser.getId().equals(tempId)) {
-            throw new IllegalStateException("이미 팔로우한 사용자");
-        }
+        checkNotSelfAction(findUser.getId(), tempId);
 
         FollowResponseDto follow = followService.follow(findUser.getId(), tempId);
 
@@ -54,19 +45,10 @@ public class FollowController {
 
         Long tempId = 1L;
 
-        UserResponseDto findUser;
+        UserResponseDto findUser = checkEmailOrNickname(nickname, email);
 
-        if (nickname != null) {
-            findUser = userService.findByNickname(nickname);
-        } else if (email != null) {
-            findUser = userService.findByEmail(email);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        if (findUser.getId().equals(tempId)) {
-            throw new IllegalStateException("본인 언팔로우 금지");
-        }
+        // 본인 언팔 불가
+        checkNotSelfAction(findUser.getId(), tempId);
 
         followService.unfollow(findUser.getId(), tempId);
         return new ResponseEntity<>("언팔로우", HttpStatus.OK);
@@ -78,6 +60,15 @@ public class FollowController {
 
         Long tempId = 1L;
 
+        UserResponseDto findUser = checkEmailOrNickname(nickname, email);
+
+        String isFollowBack = followService.checkFollowBack(findUser.getId(), tempId);
+
+        return new ResponseEntity<>(isFollowBack, HttpStatus.OK);
+    }
+
+    public UserResponseDto checkEmailOrNickname(String nickname, String email) {
+
         UserResponseDto findUser;
 
         if (nickname != null) {
@@ -85,11 +76,15 @@ public class FollowController {
         } else if (email != null) {
             findUser = userService.findByEmail(email);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        String isFollowBack = followService.checkFollowBack(findUser.getId(), tempId);
+        return findUser;
+    }
 
-        return new ResponseEntity<>(isFollowBack, HttpStatus.OK);
+    public void checkNotSelfAction(Long followerId, Long followingId) {
+        if (followerId.equals(followingId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
 }
