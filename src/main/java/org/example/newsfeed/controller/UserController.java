@@ -3,7 +3,6 @@ package org.example.newsfeed.controller;
 import org.example.newsfeed.dto.user.DeleteUserRequestDto;
 import org.example.newsfeed.dto.user.SignUpRequestDto;
 import org.example.newsfeed.dto.user.SignUpResponseDto;
-import org.example.newsfeed.dto.user.UpdateUserRequestDto;
 import org.example.newsfeed.dto.user.UserResponseDto;
 import org.example.newsfeed.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -40,9 +39,9 @@ public class UserController {
 		}
 	}
 
-	@PatchMapping
-	public ResponseEntity<Void> updatePassword(@RequestBody UpdateUserRequestDto dto) {
-		userService.updatePassword(dto.getNickname(), dto.getOldPassword(), dto.getNewPassword());
+	@PatchMapping("/{id}")
+	public ResponseEntity<Void> updateUser(@PathVariable Long id, @RequestBody UpdateUserRequestDto dto) {
+		userService.updateUser(id, dto.getOldNickname(), dto.getNewNickname(), dto.getOldPassword(), dto.getNewPassword());
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
@@ -53,5 +52,4 @@ public class UserController {
 
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
-
 }
