@@ -3,6 +3,7 @@ package org.example.newsfeed.service;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.example.newsfeed.common.config.PasswordEncoder;
 import org.example.newsfeed.dto.user.SignUpRequestDto;
 import org.example.newsfeed.dto.user.SignUpResponseDto;
 import org.example.newsfeed.dto.user.UserResponseDto;
@@ -23,9 +24,13 @@ public class UserService {
 
 	private final UserRepository userRepository;
 	private final DeletedUserRepository deletedUserRepository;
+	private final PasswordEncoder passwordEncoder;
 
 	public SignUpResponseDto signUp(SignUpRequestDto dto) {
-		User user = new User(dto.getNickname(), dto.getEmail(), dto.getPassword(), dto.getBirth());
+
+		String encodePassword = passwordEncoder.encode(dto.getPassword());
+
+		User user = new User(dto.getNickname(), dto.getEmail(), encodePassword, dto.getBirth());
 		User savedUser = userRepository.save(user);
 		return new SignUpResponseDto(savedUser.getNickname(), savedUser.getEmail());
 	}
@@ -51,10 +56,13 @@ public class UserService {
 	@Transactional
 	public void updatePassword(Long id, String oldPassword, String newPassword) {
 		User findUser = userRepository.findByIdOrElseThrow(id);
-		if(!findUser.getPassword().equals(oldPassword)) {
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");
-		}
-		findUser.updatePassword(newPassword);
+
+		checkedPassword(findUser, oldPassword);
+
+		// 새로운 비밀번호 암호화
+		String encodeNewPassword = passwordEncoder.encode(newPassword);
+
+		findUser.updatePassword(encodeNewPassword);
 	}
 
 	public void updateNickname(Long id, String nickname) {
@@ -76,11 +84,7 @@ public class UserService {
 	public void delete(Long id, String password) {
 		User findUser = userRepository.findByIdOrElseThrow(id);
 
-		String userPassword = findUser.getPassword();
-
-		if (!userPassword.equals(password)) {
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "잘못된 비밀번호");
-		}
+		checkedPassword(findUser, password);
 
 		DeletedUser deletedUser = new DeletedUser(findUser, LocalDateTime.now());
 		deletedUserRepository.save(deletedUser);
@@ -88,4 +92,13 @@ public class UserService {
 		userRepository.delete(findUser);
 	}
 
+	// 비밀번호 검증
+	public void checkedPassword(User user, String password) {
+
+		String userPassword = user.getPassword();
+
+		if (!passwordEncoder.matches(password, userPassword)) {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "잘못된 비밀번호");
+		}
+	}
 }
