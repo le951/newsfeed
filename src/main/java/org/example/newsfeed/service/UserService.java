@@ -59,6 +59,22 @@ public class UserService {
 		findUser.updatePassword(newPassword);
 	}
 
+	public void updateNickname(Long id, String nickname) {
+		User findUser = userRepository.findByIdOrElseThrow(id);
+
+		// 이름이 동일하면 종료
+		if (findUser.getNickname().equals(nickname)) {
+			return;
+		}
+
+		if (userRepository.findByNickname(nickname).isPresent()) {
+			throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 사용 중인 닉네임입니다.");
+		}
+
+		findUser.updateNickname(nickname);
+		userRepository.save(findUser);
+	}
+
 	public void delete(Long id, String password) {
 		User findUser = userRepository.findByIdOrElseThrow(id);
 
@@ -73,4 +89,5 @@ public class UserService {
 
 		userRepository.delete(findUser);
 	}
+
 }
