@@ -20,7 +20,7 @@ public enum ErrorCode {
     USER_NOT_FOUND(404, "Not Found", "U003", "User Not Found"),
 
     //board
-    BOARD_NOT_FOUND(404, "Not Found", "U002", "User Not Found");
+    BOARD_NOT_FOUND(404, "Not Found", "B001", "User Not Found");
 
     private final int status;
     private final String error;
