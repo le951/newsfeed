@@ -25,6 +25,16 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
         );
   }
 
+  default Board findByIdOrElseThrow(Long boardId){
+    return findById(boardId)
+        .orElseThrow(()->
+            new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Does not exist id = " + boardId
+            )
+        );
+  }
+
   Page<Board> findAllByUserIdIn(List<Long> followerIds, Pageable pageable);
 }
 

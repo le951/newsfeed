@@ -3,6 +3,7 @@ package org.example.newsfeed.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.common.jwt.JwtUtil;
+import org.example.newsfeed.dto.board.BoardDetailResponseDto;
 import org.example.newsfeed.dto.board.BoardListDto;
 import org.example.newsfeed.dto.board.BoardPagingDto;
 import org.example.newsfeed.dto.board.BoardRequestDto;
@@ -39,8 +40,6 @@ public class BoardController {
       HttpServletRequest request
   ){
 
-//    Long userId = (Long) request.getAttribute("userId");
-
     Long userId = findUserIdFromToken(request);
     BoardResponseDto boardResponseDto = boardService.saveBoard(userId, requestDto);
 
@@ -69,6 +68,16 @@ public class BoardController {
 
 
   // 게시물 단건 조회
+  @GetMapping("/{boardId}")
+  public ResponseEntity<BoardDetailResponseDto> findBoardById(
+      @PathVariable Long boardId
+  ){
+
+    BoardDetailResponseDto findBoard = boardService.findBoardById(boardId);
+
+    return new ResponseEntity<>(findBoard,HttpStatus.OK);
+
+  }
 
   // 게시물 전체 조회 -> 팔로우 한사람들만(구독중인 채널 가져오기 같은 느낌)
   @GetMapping("/following")
@@ -90,11 +99,8 @@ public class BoardController {
   // 게시물 전체 조회 -> 모든 게시물중에서
   @GetMapping("/allusers")
   public Page<BoardListDto> findAllBoardsOfAllUsers(
-      @RequestParam int pageNumber,
-      HttpServletRequest request
+      @RequestParam int pageNumber
   ){
-
-    String requestURI = request.getRequestURI();
 
     BoardPagingDto boardPagingDto = new BoardPagingDto();
 

@@ -3,17 +3,18 @@ package org.example.newsfeed.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.example.newsfeed.dto.board.BoardDetailResponseDto;
 import org.example.newsfeed.dto.board.BoardListDto;
 import org.example.newsfeed.dto.board.BoardPagingDto;
 import org.example.newsfeed.dto.board.BoardRequestDto;
 import org.example.newsfeed.dto.board.BoardResponseDto;
+import org.example.newsfeed.dto.comment.CommentResponseDto;
 import org.example.newsfeed.entity.Board;
 import org.example.newsfeed.entity.Comment;
 import org.example.newsfeed.entity.Follow;
 import org.example.newsfeed.entity.User;
 import org.example.newsfeed.repository.BoardRepository;
 import org.example.newsfeed.repository.CommentRepository;
-import org.example.newsfeed.repository.FollowRepository;
 import org.example.newsfeed.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,7 +30,6 @@ public class BoardService {
 
   private final BoardRepository boardRepository;
   private final UserRepository userRepository;
-  private final FollowRepository followRepository;
   private final CommentRepository commentRepository;
 
   // session버전 게시물 생성
@@ -64,6 +64,23 @@ public class BoardService {
         findBoard.getTitle(),
         findBoard.getContents(),
         findBoard.getCreatedAt()
+    );
+
+  }
+
+  // 게시물 단건 조회
+  public BoardDetailResponseDto findBoardById(Long boardId) {
+    Board findBoard = boardRepository.findByIdOrElseThrow(boardId);
+
+    List<CommentResponseDto> commentList = findBoard.getCommentList().stream().map(CommentResponseDto::toDto).toList();
+
+
+    return new BoardDetailResponseDto(
+        findBoard.getUser().getNickname(),
+        findBoard.getTitle(),
+        findBoard.getContents(),
+        findBoard.getCreatedAt(),
+        commentList
     );
 
   }
@@ -131,5 +148,6 @@ public class BoardService {
 
     boardRepository.delete(findBoard);
   }
+
 
 }

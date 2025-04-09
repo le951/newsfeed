@@ -2,6 +2,7 @@ package org.example.newsfeed.entity;
 
 
 import jakarta.persistence.*;
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 @Getter
@@ -22,6 +23,9 @@ public class Board extends BaseEntity{
 
     @ManyToOne
     private User user;
+
+    @OneToMany(mappedBy = "board")
+    private List<Comment> CommentList;
 
     public Board(String title, String contents){
         this.title = title;
