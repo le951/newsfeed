@@ -78,9 +78,9 @@ public class BoardService {
 
     User findUser = userRepository.findByIdOrElseThrow(userId);
 
-    List<Follow> findFollowingIds = findUser.getFollowingId();
+    List<Follow> findFollowerIds = findUser.getFollowerId();
 
-    Page<Board> boardPages = boardRepository.findAllByUserIdIn(findFollowingIds,pageable);
+    Page<Board> boardPages = boardRepository.findAllByUserIdIn(findFollowerIds,pageable);
 
     Page<BoardListDto> boardListDtos = boardPages.map(
         boardPage -> new BoardListDto(boardPage.getUser().getNickname(), boardPage.getTitle(),

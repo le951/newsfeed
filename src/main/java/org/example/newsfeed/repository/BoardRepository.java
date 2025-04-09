@@ -26,6 +26,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
         );
   }
 
-  Page<Board> findAllByUserIdIn(List<Follow> followingId, Pageable pageable);
+  Page<Board> findAllByUserIdIn(List<Follow> followerIds, Pageable pageable);
 }
 
