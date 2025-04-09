@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -38,8 +39,9 @@ public class BoardController {
       HttpServletRequest request
   ){
 
-    Long userId = (Long) request.getAttribute("userId");
+//    Long userId = (Long) request.getAttribute("userId");
 
+    Long userId = findUserIdFromToken(request);
     BoardResponseDto boardResponseDto = boardService.saveBoard(userId, requestDto);
 
     return new ResponseEntity<>(HttpStatus.CREATED);
@@ -53,7 +55,7 @@ public class BoardController {
       HttpServletRequest request
   ){
 
-    Long userId = (Long) request.getAttribute("userId");
+    Long userId = findUserIdFromToken(request);
 
     BoardResponseDto boardResponseDto =
         boardService.updateBoard(
@@ -71,8 +73,8 @@ public class BoardController {
   // 게시물 전체 조회 -> 팔로우 한사람들만(구독중인 채널 가져오기 같은 느낌)
 
   // 게시물 전체 조회 -> 모든 게시물중에서
-  @GetMapping
-  public Page<BoardListDto> findAllBoardsOfAllUsers(@PathVariable int pageNumber){
+  @GetMapping("/allusers")
+  public Page<BoardListDto> findAllBoardsOfAllUsers(@RequestParam int pageNumber){
 
 
     BoardPagingDto boardPagingDto = new BoardPagingDto();
@@ -90,11 +92,22 @@ public class BoardController {
       @PathVariable Long boardId
   ){
 
-    Long userId = (Long) request.getAttribute("userId");
+    Long userId = findUserIdFromToken(request);
 
     boardService.deleteBoard(userId,boardId);
 
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+
+  public Long findUserIdFromToken(HttpServletRequest request){
+    Number userIdAttr = (Number) request.getAttribute("userId");
+    Long userId = userIdAttr.longValue();
+
+    if (userId == null) {
+      throw new RuntimeException("로그인이 필요합니다.");
+    }
+    return userId;
   }
 
 }
