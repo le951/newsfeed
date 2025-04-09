@@ -80,7 +80,13 @@ public class BoardService {
 
     List<Follow> findFollowerIds = findUser.getFollowerId();
 
-    Page<Board> boardPages = boardRepository.findAllByUserIdIn(findFollowerIds,pageable);
+    List<Long> followerUserIds = findFollowerIds.stream()
+        .map(follow ->
+            follow.getFollowing()
+                .getId()
+        ).toList();
+
+    Page<Board> boardPages = boardRepository.findAllByUserIdIn(followerUserIds,pageable);
 
     Page<BoardListDto> boardListDtos = boardPages.map(
         boardPage -> new BoardListDto(boardPage.getUser().getNickname(), boardPage.getTitle(),
