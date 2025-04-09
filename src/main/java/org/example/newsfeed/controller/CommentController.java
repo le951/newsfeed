@@ -1,12 +1,16 @@
 package org.example.newsfeed.controller;
 
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.newsfeed.common.jwt.JwtUtil;
 import org.example.newsfeed.dto.comment.CommentRequestDto;
 import org.example.newsfeed.service.CommentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,25 +22,12 @@ public class CommentController {
     @PostMapping("/newsfeeds/{newsfeedsId}/comments")
     public ResponseEntity<String> saveComment(
             @PathVariable Long newsfeedsId,
-            //            HttpServletRequest httpServletRequest,
-            @Valid @RequestBody CommentRequestDto requsetDto
+            @Valid @RequestBody CommentRequestDto requsetDto,
+            HttpServletRequest httpServletRequest
     ) {
 
-        //현재 userId 는 테스트용도 - 후에 수정할 예정
-         /*
-         테스트 당시 board 기능이 구현되지 않아 console에서 하단 쿼리문 실행 후 테스트함
-
-         INSERT INTO boards(title, contents,user_id,created_at)
-         VALUES('타이틀','내용',1,'2025-04-08');
-
-         localhost:8080/newsfeeds/1/comments
-
-         {
-         "comments" : "댓글3"
-         }
-
-          */
-        commentService.saveComment(newsfeedsId, 1L, requsetDto);
+        Long userId = loginCheck(httpServletRequest);
+        commentService.saveComment(newsfeedsId, userId, requsetDto);
 
         return new ResponseEntity<>("댓글 작성 완료", HttpStatus.CREATED);
     }
@@ -45,13 +36,34 @@ public class CommentController {
     //Response 메세지는 임시 - 후에 논의 후 수정
     @PatchMapping("/comments/{commentsId}")
     public ResponseEntity<String> updateComment(
-            @PathVariable Long commmetsId,
-            //HttpServletRequest httpServletRequest,
+            @PathVariable Long commentsId,
+            HttpServletRequest httpServletRequest,
             @Valid @RequestBody CommentRequestDto requestDto
     ) {
-        //LoginResponseDto loginUser = (LoginResponseDto) httpServletRequest.getSession().getAttribute(Const.LOGIN_USER);
-        commentService.updateComment(commmetsId, 1L, requestDto);
+
+        Long userId = loginCheck(httpServletRequest);
+        commentService.updateComment(commentsId, userId, requestDto);
 
         return new ResponseEntity<>("댓글 수정 완료", HttpStatus.OK);
+    }
+
+    //댓글 삭제 기능
+    @DeleteMapping("/comments/{commentsId}")
+    public ResponseEntity<String> deleteComment(
+            @PathVariable Long commentsId,
+            HttpServletRequest httpServletRequest
+    ){
+        Long userId = loginCheck(httpServletRequest);
+
+        commentService.deleteComment(commentsId,userId);
+        return new ResponseEntity<>("삭제 완료", HttpStatus.OK);
+    }
+
+    private Long loginCheck(HttpServletRequest httpServletRequest){
+        Long userId = (Long)httpServletRequest.getAttribute("userId");
+        if(userId == null){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"로그인이 필요합니다.");
+        }
+        return userId;
     }
 }
