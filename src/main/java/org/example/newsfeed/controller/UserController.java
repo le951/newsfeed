@@ -1,10 +1,7 @@
 package org.example.newsfeed.controller;
 
-import java.util.function.DoubleToIntFunction;
-
-import org.example.newsfeed.common.exception.CustomException;
-import org.example.newsfeed.common.exception.ErrorCode;
 import org.example.newsfeed.dto.user.DeleteUserRequestDto;
+import org.example.newsfeed.dto.user.FindUserRequestDto;
 import org.example.newsfeed.dto.user.LoginRequestDto;
 import org.example.newsfeed.dto.user.SignUpRequestDto;
 import org.example.newsfeed.dto.user.SignUpResponseDto;
@@ -17,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -40,21 +36,18 @@ public class UserController {
 	}
 
 	@GetMapping
-	public ResponseEntity<UserResponseDto> findUser(
-		@RequestParam(required = false) String nickname,
-		@RequestParam(required = false) String email
-	) {
-		if (nickname != null) {
-			return new ResponseEntity<>(userService.findByNickname(nickname), HttpStatus.OK);
-		} else if (email != null) {
-			return new ResponseEntity<>(userService.findByEmail(email), HttpStatus.OK);
+	public ResponseEntity<UserResponseDto> findUser(@Valid @RequestBody FindUserRequestDto dto) {
+		if (dto.getNickname() != null) {
+			return new ResponseEntity<>(userService.findByNickname(dto.getNickname()), HttpStatus.OK);
+		} else if (dto.getEmail() != null) {
+			return new ResponseEntity<>(userService.findByEmail(dto.getEmail()), HttpStatus.OK);
 		} else {
 			return ResponseEntity.badRequest().build();
 		}
 	}
 
 	@PatchMapping("/password")
-	public ResponseEntity<String> updatePassword(@RequestBody UpdatePasswordRequestDto dto, HttpServletRequest servletRequest) {
+	public ResponseEntity<String> updatePassword(@Valid @RequestBody UpdatePasswordRequestDto dto, HttpServletRequest servletRequest) {
 		Long userId = (Long) servletRequest.getAttribute("userId");
 		if (userId == null) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -64,7 +57,7 @@ public class UserController {
 	}
 
 	@PatchMapping("/nickname")
-	public ResponseEntity<String> updateNickname(@RequestBody UpdateNicknameRequestDto dto, HttpServletRequest servletRequest) {
+	public ResponseEntity<String> updateNickname(@Valid @RequestBody UpdateNicknameRequestDto dto, HttpServletRequest servletRequest) {
 		Long userId = (Long) servletRequest.getAttribute("userId");
 		if (userId == null) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
