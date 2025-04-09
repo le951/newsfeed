@@ -29,7 +29,7 @@ public class UserController {
 	private final UserService userService;
 
 	@PostMapping("/signup")
-	public ResponseEntity<SignUpResponseDto> createUser(@RequestBody SignUpRequestDto dto) {
+	public ResponseEntity<SignUpResponseDto> createUser(@Valid @RequestBody SignUpRequestDto dto) {
 		return new ResponseEntity<>(userService.signUp(dto), HttpStatus.CREATED);
 	}
 
