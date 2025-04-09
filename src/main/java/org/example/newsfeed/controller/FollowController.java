@@ -2,6 +2,8 @@ package org.example.newsfeed.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.example.newsfeed.common.exception.CustomException;
+import org.example.newsfeed.common.exception.ErrorCode;
 import org.example.newsfeed.dto.follow.FollowResponseDto;
 import org.example.newsfeed.dto.user.UserResponseDto;
 import org.example.newsfeed.service.FollowService;
@@ -27,7 +29,7 @@ public class FollowController {
         Long userId = (Long) servletRequest.getAttribute("userId");
 
         if (userId == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
         UserResponseDto findUser = checkEmailOrNickname(nickname, email);
@@ -80,7 +82,7 @@ public class FollowController {
         } else if (email != null) {
             findUser = userService.findByEmail(email);
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
         return findUser;
@@ -88,7 +90,7 @@ public class FollowController {
 
     public void checkNotSelfAction(Long followerId, Long followingId) {
         if (followerId.equals(followingId)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new CustomException(ErrorCode.ACTION_SELF_ACCOUNT);
         }
     }
 }

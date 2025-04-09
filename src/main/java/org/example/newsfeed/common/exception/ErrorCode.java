@@ -19,6 +19,11 @@ public enum ErrorCode {
     NICKNAME_DUPLICATION(400, "Bad Request", "U002", "NickName is Duplicated"),
     USER_NOT_FOUND(404, "Not Found", "U003", "User Not Found"),
 
+    // Follow
+    ACTION_SELF_ACCOUNT(400, "Bad Request", "F001", "Can't Self Action"),
+    ALREADY_FOLLOW(400, "Bad Request", "F002", "Already Followed User"),
+    NOT_FOLLOW_USER(400, "Bad Request", "F003", "Not Follow User"),
+
     //board
     BOARD_NOT_FOUND(404, "Not Found", "B001", "User Not Found"),
 
