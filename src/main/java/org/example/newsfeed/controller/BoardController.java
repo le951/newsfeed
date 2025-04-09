@@ -79,8 +79,6 @@ public class BoardController {
 
     Long userId = findUserIdFromToken(request);
 
-    String requestURI = request.getRequestURI();
-
     BoardPagingDto boardPagingDto = new BoardPagingDto();
 
     boardPagingDto.setPage(pageNumber);
