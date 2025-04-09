@@ -1,8 +1,12 @@
 package org.example.newsfeed.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.newsfeed.common.exception.CustomException;
+import org.example.newsfeed.common.exception.ErrorCode;
 import org.example.newsfeed.common.jwt.JwtUtil;
+import org.example.newsfeed.dto.board.BoardDetailResponseDto;
 import org.example.newsfeed.dto.board.BoardListDto;
 import org.example.newsfeed.dto.board.BoardPagingDto;
 import org.example.newsfeed.dto.board.BoardRequestDto;
@@ -39,8 +43,6 @@ public class BoardController {
       HttpServletRequest request
   ){
 
-//    Long userId = (Long) request.getAttribute("userId");
-
     Long userId = findUserIdFromToken(request);
     BoardResponseDto boardResponseDto = boardService.saveBoard(userId, requestDto);
 
@@ -51,7 +53,7 @@ public class BoardController {
   @PatchMapping("/{boardId}")
   public ResponseEntity<BoardResponseDto> updateBoard(
       @PathVariable Long boardId,
-      @RequestBody BoardRequestDto requestDto,
+      @Valid @RequestBody BoardRequestDto requestDto,
       HttpServletRequest request
   ){
 
@@ -69,6 +71,16 @@ public class BoardController {
 
 
   // 게시물 단건 조회
+  @GetMapping("/{boardId}")
+  public ResponseEntity<BoardDetailResponseDto> findBoardById(
+      @PathVariable Long boardId
+  ){
+
+    BoardDetailResponseDto findBoard = boardService.findBoardById(boardId);
+
+    return new ResponseEntity<>(findBoard,HttpStatus.OK);
+
+  }
 
   // 게시물 전체 조회 -> 팔로우 한사람들만(구독중인 채널 가져오기 같은 느낌)
   @GetMapping("/following")
@@ -90,11 +102,8 @@ public class BoardController {
   // 게시물 전체 조회 -> 모든 게시물중에서
   @GetMapping("/allusers")
   public Page<BoardListDto> findAllBoardsOfAllUsers(
-      @RequestParam int pageNumber,
-      HttpServletRequest request
+      @RequestParam int pageNumber
   ){
-
-    String requestURI = request.getRequestURI();
 
     BoardPagingDto boardPagingDto = new BoardPagingDto();
 
@@ -120,11 +129,11 @@ public class BoardController {
 
 
   public Long findUserIdFromToken(HttpServletRequest request){
-    Number userIdAttr = (Number) request.getAttribute("userId");
-    Long userId = userIdAttr.longValue();
+
+    Long userId = (Long) request.getAttribute("userId");
 
     if (userId == null) {
-      throw new RuntimeException("로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.USER_NOT_FOUND);
     }
     return userId;
   }

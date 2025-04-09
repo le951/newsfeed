@@ -25,7 +25,7 @@ public enum ErrorCode {
     NOT_FOLLOW_USER(400, "Bad Request", "F003", "Not Follow User"),
 
     //board
-    BOARD_NOT_FOUND(404, "Not Found", "B001", "User Not Found"),
+    BOARD_NOT_FOUND(404, "Not Found", "B001", "Board Not Found"),
 
     //comment
     COMMENT_NOT_FOUND(404,"Not Found","CM001","댓글을 찾을 수 없습니다"),
