@@ -68,7 +68,7 @@ public class BoardService {
   @Transactional(readOnly = true)
   public Page<BoardListDto> findAllBoardsOfAllUsers(BoardPagingDto boardPagingDto) {
 
-    Sort sort = Sort.by(Sort.Direction.fromString(boardPagingDto.getSort()), "created_at");
+    Sort sort = Sort.by(Sort.Direction.fromString(boardPagingDto.getSort()), "createdAt");
     Pageable pageable = PageRequest.of(boardPagingDto.getPage(), boardPagingDto.getSize(), sort);
 
     Page<Board> boardPages = boardRepository.findAll(pageable);
