@@ -1,0 +1,35 @@
+package org.example.newsfeed.common.exception;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+public enum ErrorCode {
+
+    // common
+    INVALID_INPUT_VALUE(400, "Bad Request", "C001", "Invalid Input Value"),
+    METHOD_NOT_ALLOWED(405, "Method Not Allowed", "C002", "Method Not Allowed"),
+    ENTITY_NOT_FOUND(400, "Bad Request", "C003", "Entity Not Found"),
+    INTERNAL_SERVER_ERROR(500, "Server Error", "C004", "Internal Server Error"),
+    INVALID_TYPE_VALUE(400, "Bad Request", "C005", "Invalid Type Value"),
+
+    // User
+    EMAIL_DUPLICATION(400, "Bad Request", "U001", "Email is Duplicated"),
+    NICKNAME_DUPLICATION(400, "Bad Request", "U002", "NickName is Duplicated"),
+    USER_NOT_FOUND(404, "Not Found", "U003", "User Not Found"),
+
+    //board
+    BOARD_NOT_FOUND(404, "Not Found", "B001", "User Not Found"),
+
+    //comment
+    COMMENT_NOT_FOUND(404,"Not Found","CM001","댓글을 찾을 수 없습니다"),
+    UNAUTHORIZED_COMMENT_UPDATE(403,"Forbidden","CM002","댓글 작성자만 댓글을 수정할 수 있습니다."),
+    UNAUTHORIZED_COMMENT_DELETE(403,"Forbidden","CM003","댓글 작성자 혹은 게시글 작성자만 댓글을 삭제할 수 있습니다.");
+
+    private final int status;
+    private final String error;
+    private final String code;
+    private final String message;
+
+}

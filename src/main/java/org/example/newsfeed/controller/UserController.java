@@ -2,6 +2,8 @@ package org.example.newsfeed.controller;
 
 import java.util.function.DoubleToIntFunction;
 
+import org.example.newsfeed.common.exception.CustomException;
+import org.example.newsfeed.common.exception.ErrorCode;
 import org.example.newsfeed.dto.user.DeleteUserRequestDto;
 import org.example.newsfeed.dto.user.LoginRequestDto;
 import org.example.newsfeed.dto.user.SignUpRequestDto;
