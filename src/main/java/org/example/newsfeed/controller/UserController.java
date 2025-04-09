@@ -1,7 +1,7 @@
 package org.example.newsfeed.controller;
 
 import org.example.newsfeed.dto.user.DeleteUserRequestDto;
-import org.example.newsfeed.dto.user.FindUserRequestDto;
+import org.example.newsfeed.dto.user.UserRequestDto;
 import org.example.newsfeed.dto.user.LoginRequestDto;
 import org.example.newsfeed.dto.user.SignUpRequestDto;
 import org.example.newsfeed.dto.user.SignUpResponseDto;
@@ -36,11 +36,11 @@ public class UserController {
 	}
 
 	@GetMapping
-	public ResponseEntity<UserResponseDto> findUser(@Valid @RequestBody FindUserRequestDto dto) {
-		if (dto.getNickname() != null) {
-			return new ResponseEntity<>(userService.findByNickname(dto.getNickname()), HttpStatus.OK);
-		} else if (dto.getEmail() != null) {
+	public ResponseEntity<UserResponseDto> findUser(@Valid @RequestBody UserRequestDto dto) {
+		if (dto.getEmail() != null) {
 			return new ResponseEntity<>(userService.findByEmail(dto.getEmail()), HttpStatus.OK);
+		} else if (dto.getNickname() != null) {
+			return new ResponseEntity<>(userService.findByNickname(dto.getNickname()), HttpStatus.OK);
 		} else {
 			return ResponseEntity.badRequest().build();
 		}
