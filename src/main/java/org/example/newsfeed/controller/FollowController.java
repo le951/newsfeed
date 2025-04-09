@@ -1,5 +1,6 @@
 package org.example.newsfeed.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.dto.follow.FollowResponseDto;
 import org.example.newsfeed.dto.user.UserResponseDto;
@@ -20,18 +21,21 @@ public class FollowController {
 
     @PostMapping
     public ResponseEntity<FollowResponseDto> followUser(@RequestParam(required = false) String nickname,
-                                                        @RequestParam(required = false) String email) {
+                                                        @RequestParam(required = false) String email,
+                                                        HttpServletRequest servletRequest) {
 
-        // 로그인한 유저 정보 가져오는 거 추가해야함.
+        Long userId = (Long) servletRequest.getAttribute("userId");
 
-        Long tempId = 1L;
+        if (userId == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
 
         UserResponseDto findUser = checkEmailOrNickname(nickname, email);
 
         // 자기 자신을 팔로우 불가
-        checkNotSelfAction(findUser.getId(), tempId);
+        checkNotSelfAction(findUser.getId(), userId);
 
-        FollowResponseDto follow = followService.follow(findUser.getId(), tempId);
+        FollowResponseDto follow = followService.follow(findUser.getId(), userId);
 
         return new ResponseEntity<>(follow, HttpStatus.OK);
 
@@ -39,30 +43,30 @@ public class FollowController {
 
     @DeleteMapping
     public ResponseEntity<String> unfollowUser(@RequestParam(required = false) String nickname,
-                                               @RequestParam(required = false) String email) {
+                                               @RequestParam(required = false) String email,
+                                               HttpServletRequest servletRequest) {
 
-        // 로그인한 유저 정보 가져오는 거 추가해야함.
-
-        Long tempId = 1L;
+        Long userId = (Long) servletRequest.getAttribute("userId");
 
         UserResponseDto findUser = checkEmailOrNickname(nickname, email);
 
         // 본인 언팔 불가
-        checkNotSelfAction(findUser.getId(), tempId);
+        checkNotSelfAction(findUser.getId(), userId);
 
-        followService.unfollow(findUser.getId(), tempId);
+        followService.unfollow(findUser.getId(), userId);
         return new ResponseEntity<>("언팔로우", HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<String> followBack(@RequestParam(required = false) String nickname,
-                                             @RequestParam(required = false) String email) {
+                                             @RequestParam(required = false) String email,
+                                             HttpServletRequest servletRequest) {
 
-        Long tempId = 1L;
+        Long userId = (Long) servletRequest.getAttribute("userId");
 
         UserResponseDto findUser = checkEmailOrNickname(nickname, email);
 
-        String isFollowBack = followService.checkFollowBack(findUser.getId(), tempId);
+        String isFollowBack = followService.checkFollowBack(findUser.getId(), userId);
 
         return new ResponseEntity<>(isFollowBack, HttpStatus.OK);
     }
