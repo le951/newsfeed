@@ -32,14 +32,14 @@ public class UserController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<String>  login(@RequestBody LoginRequestDto dto) {
+	public ResponseEntity<String> login(@RequestBody LoginRequestDto dto) {
 		String jwt = userService.login(dto.getEmail(), dto.getPassword());
 		return new ResponseEntity<>(jwt, HttpStatus.OK);
 	}
 
 	@GetMapping
 	public ResponseEntity<UserResponseDto> findUser(
-		@RequestParam(required = false) String nickname, // required = false -> 해당 파라미터가 없어도 에가 발생하지 않음
+		@RequestParam(required = false) String nickname,
 		@RequestParam(required = false) String email
 	) {
 		if (nickname != null) {
