@@ -71,11 +71,32 @@ public class BoardController {
   // 게시물 단건 조회
 
   // 게시물 전체 조회 -> 팔로우 한사람들만(구독중인 채널 가져오기 같은 느낌)
+  @GetMapping("/following")
+  public Page<BoardListDto> findAllBoardsOfFollowingUsers(
+      @RequestParam int pageNumber,
+      HttpServletRequest request
+  ){
+
+    Long userId = findUserIdFromToken(request);
+
+    String requestURI = request.getRequestURI();
+
+    BoardPagingDto boardPagingDto = new BoardPagingDto();
+
+    boardPagingDto.setPage(pageNumber);
+
+    return boardService.findAllBoardsOfFollowingUsers(boardPagingDto, userId);
+
+  }
 
   // 게시물 전체 조회 -> 모든 게시물중에서
   @GetMapping("/allusers")
-  public Page<BoardListDto> findAllBoardsOfAllUsers(@RequestParam int pageNumber){
+  public Page<BoardListDto> findAllBoardsOfAllUsers(
+      @RequestParam int pageNumber,
+      HttpServletRequest request
+  ){
 
+    String requestURI = request.getRequestURI();
 
     BoardPagingDto boardPagingDto = new BoardPagingDto();
 

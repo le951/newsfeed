@@ -9,9 +9,11 @@ import org.example.newsfeed.dto.board.BoardRequestDto;
 import org.example.newsfeed.dto.board.BoardResponseDto;
 import org.example.newsfeed.entity.Board;
 import org.example.newsfeed.entity.Comment;
+import org.example.newsfeed.entity.Follow;
 import org.example.newsfeed.entity.User;
 import org.example.newsfeed.repository.BoardRepository;
 import org.example.newsfeed.repository.CommentRepository;
+import org.example.newsfeed.repository.FollowRepository;
 import org.example.newsfeed.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +29,7 @@ public class BoardService {
 
   private final BoardRepository boardRepository;
   private final UserRepository userRepository;
+  private final FollowRepository followRepository;
   private final CommentRepository commentRepository;
 
   // session버전 게시물 생성
@@ -65,6 +68,29 @@ public class BoardService {
 
   }
 
+  // 팔로잉 유저 게시물 조회
+  @Transactional(readOnly = true)
+  public Page<BoardListDto> findAllBoardsOfFollowingUsers(BoardPagingDto boardPagingDto, Long userId) {
+
+    Sort sort = Sort.by(Sort.Direction.fromString(boardPagingDto.getSort()), "createdAt");
+
+    Pageable pageable = PageRequest.of(boardPagingDto.getPage(), boardPagingDto.getSize(), sort);
+
+    User findUser = userRepository.findByIdOrElseThrow(userId);
+
+    List<Follow> findFollowingIds = findUser.getFollowingId();
+
+    Page<Board> boardPages = boardRepository.findAllByUserIdIn(findFollowingIds,pageable);
+
+    Page<BoardListDto> boardListDtos = boardPages.map(
+        boardPage -> new BoardListDto(boardPage.getUser().getNickname(), boardPage.getTitle(),
+            boardPage.getCreatedAt()));
+
+    return boardListDtos;
+
+  }
+
+  // 모든 유저 게시물 조회
   @Transactional(readOnly = true)
   public Page<BoardListDto> findAllBoardsOfAllUsers(BoardPagingDto boardPagingDto) {
 
