@@ -52,7 +52,19 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if(claims.isEmpty())
             filterChain.doFilter(request, response);
 
-        request.setAttribute("userId", claims.get("userId"));
+        Object tempId = claims.get("userId");
+        Long userId;
+
+        if(tempId instanceof Integer){
+            userId = ((Integer) tempId).longValue();
+        } else if(tempId instanceof Long){
+            userId = ((Long) tempId);
+        } else {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        request.setAttribute("userId", userId);
         request.setAttribute("nickname", claims.get("nickname"));
         request.setAttribute("email", claims.get("email"));
 
