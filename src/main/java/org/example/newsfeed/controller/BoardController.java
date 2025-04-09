@@ -1,7 +1,10 @@
 package org.example.newsfeed.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.newsfeed.common.exception.CustomException;
+import org.example.newsfeed.common.exception.ErrorCode;
 import org.example.newsfeed.common.jwt.JwtUtil;
 import org.example.newsfeed.dto.board.BoardDetailResponseDto;
 import org.example.newsfeed.dto.board.BoardListDto;
@@ -50,7 +53,7 @@ public class BoardController {
   @PatchMapping("/{boardId}")
   public ResponseEntity<BoardResponseDto> updateBoard(
       @PathVariable Long boardId,
-      @RequestBody BoardRequestDto requestDto,
+      @Valid @RequestBody BoardRequestDto requestDto,
       HttpServletRequest request
   ){
 
@@ -126,11 +129,11 @@ public class BoardController {
 
 
   public Long findUserIdFromToken(HttpServletRequest request){
-    Number userIdAttr = (Number) request.getAttribute("userId");
-    Long userId = userIdAttr.longValue();
+
+    Long userId = (Long) request.getAttribute("userId");
 
     if (userId == null) {
-      throw new RuntimeException("로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.USER_NOT_FOUND);
     }
     return userId;
   }
