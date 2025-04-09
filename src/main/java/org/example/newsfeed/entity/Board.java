@@ -4,7 +4,6 @@ package org.example.newsfeed.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 @Getter
 @NoArgsConstructor
 @Entity
