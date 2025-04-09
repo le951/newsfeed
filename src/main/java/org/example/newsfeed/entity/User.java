@@ -31,10 +31,10 @@ public class User extends BaseEntity {
     private LocalDate birth;
 
     @OneToMany(mappedBy = "follower")
-    private List<Follow> followerId;
+    private List<Follow> followerList;
 
     @OneToMany(mappedBy = "following")
-    private List<Follow> followingId;
+    private List<Follow> followingList;
 
     public User(String nickname, String email, String password, LocalDate birth) {
         this.nickname = nickname;

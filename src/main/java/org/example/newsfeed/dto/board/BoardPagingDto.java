@@ -9,5 +9,4 @@ public class BoardPagingDto {
   private int page;
   private int size = 10;
   private String sort = "DESC";
-
 }

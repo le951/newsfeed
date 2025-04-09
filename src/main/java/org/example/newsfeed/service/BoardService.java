@@ -76,17 +76,21 @@ public class BoardService {
 
     Pageable pageable = PageRequest.of(boardPagingDto.getPage(), boardPagingDto.getSize(), sort);
 
+    // 로그인 유저 객체 가져옴
     User findUser = userRepository.findByIdOrElseThrow(userId);
 
-    List<Follow> findFollowerIds = findUser.getFollowerId();
+    // 로그인 유저의 팔로잉 리스트 가져오기
+    List<Follow> findFollowerList = findUser.getFollowingList();
 
-    List<Long> followerUserIds = findFollowerIds.stream()
+    // 팔로잉 리스트의 아이디값 추출
+    List<Long> followerUserIdList = findFollowerList.stream()
         .map(follow ->
-            follow.getFollowing()
+            follow.getFollower()
                 .getId()
         ).toList();
 
-    Page<Board> boardPages = boardRepository.findAllByUserIdIn(followerUserIds,pageable);
+    // 아이디값에 해당하는 게시물 모두 가져옴
+    Page<Board> boardPages = boardRepository.findAllByUserIdIn(followerUserIdList,pageable);
 
     Page<BoardListDto> boardListDtos = boardPages.map(
         boardPage -> new BoardListDto(boardPage.getUser().getNickname(), boardPage.getTitle(),
