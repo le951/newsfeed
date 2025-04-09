@@ -1,6 +1,8 @@
 package org.example.newsfeed.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.newsfeed.common.exception.CustomException;
+import org.example.newsfeed.common.exception.ErrorCode;
 import org.example.newsfeed.dto.follow.FollowResponseDto;
 import org.example.newsfeed.entity.Follow;
 import org.example.newsfeed.entity.User;
@@ -21,7 +23,7 @@ public class FollowService {
         User following = userRepository.findByIdOrElseThrow(FollowingId);
 
         if (followRepository.existsByFollowerAndFollowing(follower, following)) {
-            throw new IllegalStateException("이미 팔로우");
+            throw new CustomException(ErrorCode.ALREADY_FOLLOW);
         }
 
         Follow follow = new Follow(follower, following);
@@ -36,7 +38,7 @@ public class FollowService {
         User following = userRepository.findByIdOrElseThrow(followingId);
 
         Follow follow = followRepository.findByFollowerAndFollowing(follower, following)
-                .orElseThrow(() -> new IllegalStateException("팔로우중이 아닙니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOLLOW_USER));
 
         followRepository.delete(follow);
     }
