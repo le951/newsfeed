@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.example.newsfeed.common.config.PasswordEncoder;
+import org.example.newsfeed.common.jwt.JwtUtil;
 import org.example.newsfeed.dto.user.SignUpRequestDto;
 import org.example.newsfeed.dto.user.SignUpResponseDto;
 import org.example.newsfeed.dto.user.UserResponseDto;
@@ -25,6 +26,7 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final DeletedUserRepository deletedUserRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final JwtUtil jwtUtil;
 
 	public SignUpResponseDto signUp(SignUpRequestDto dto) {
 
@@ -33,6 +35,14 @@ public class UserService {
 		User user = new User(dto.getNickname(), dto.getEmail(), encodePassword, dto.getBirth());
 		User savedUser = userRepository.save(user);
 		return new SignUpResponseDto(savedUser.getNickname(), savedUser.getEmail());
+	}
+
+	public String login(String email, String password) {
+		User findUser = userRepository.findByEmailOrElseThrow(email);
+		if (!passwordEncoder.matches(password, findUser.getPassword())) {
+			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+		}
+		return jwtUtil.generateAccessToken(findUser.getId(), findUser.getNickname(), findUser.getEmail());
 	}
 
 	public UserResponseDto findByNickname(String nickname) {
@@ -101,4 +111,6 @@ public class UserService {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "잘못된 비밀번호");
 		}
 	}
+
+
 }
