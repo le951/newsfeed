@@ -8,12 +8,16 @@ import java.util.Optional;
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
 
+    // follow 테이블에 toUser / fromUser 으로 된 조합이 있는지 확인
+    // => 팔로우 되어있는지 확인
     boolean existsByToUserAndFromUser(User toUser, User fromUser);
 
+    // fromUser가 toUser에 해당하는 팔로우 반환
     Optional<Follow> findByToUserAndFromUser(User toUser, User fromUser);
 
+    // 팔로워 수 확인
     int countByToUser(User toUser);
 
+    // 팔로잉 수 확인
     int countByFromUser(User fromUser);
-
 }
