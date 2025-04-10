@@ -55,9 +55,7 @@ public class UserController {
 	@PatchMapping("/password")
 	public ResponseEntity<String> updatePassword(@Valid @RequestBody UpdatePasswordRequestDto dto, HttpServletRequest servletRequest) {
 		Long userId = (Long) servletRequest.getAttribute("userId");
-		if (userId == null) {
-			throw new CustomException(ErrorCode.UNAUTHORIZED_USER);
-		}
+		checkedLogin(userId);
 		userService.updatePassword(userId, dto.getOldPassword(), dto.getNewPassword());
 		return new ResponseEntity<>("비밀번호 변경완료", HttpStatus.OK);
 	}
@@ -66,9 +64,7 @@ public class UserController {
 	@PatchMapping("/nickname")
 	public ResponseEntity<String> updateNickname(@Valid @RequestBody UpdateNicknameRequestDto dto, HttpServletRequest servletRequest) {
 		Long userId = (Long) servletRequest.getAttribute("userId");
-		if (userId == null) {
-			throw new CustomException(ErrorCode.UNAUTHORIZED_USER);
-		}
+		checkedLogin(userId);
 		userService.updateNickname(userId, dto.getNickname());
 		return new ResponseEntity<>("닉네임 변경완료", HttpStatus.OK);
 	}
@@ -77,10 +73,15 @@ public class UserController {
 	@DeleteMapping
 	public ResponseEntity<String> deleteUser(@RequestBody DeleteUserRequestDto dto, HttpServletRequest servletRequest) {
 		Long userId = (Long) servletRequest.getAttribute("userId");
-		if (userId == null) {
-			throw new CustomException(ErrorCode.UNAUTHORIZED_USER);
-		}
+		checkedLogin(userId);
 		userService.delete(userId, dto.getPassword());
 		return new ResponseEntity<>("삭제 완료", HttpStatus.OK);
+	}
+
+	// 유저 존재 검증
+	public void checkedLogin(Long userId) {
+		if (userId == null) {
+			throw new CustomException(ErrorCode.USER_NOT_FOUND);
+		}
 	}
 }
