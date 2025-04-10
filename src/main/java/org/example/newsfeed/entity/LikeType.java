@@ -1,12 +1,14 @@
 package org.example.newsfeed.entity;
 
 import lombok.Getter;
+import org.example.newsfeed.common.exception.CustomException;
+import org.example.newsfeed.common.exception.ErrorCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 @Getter
 public enum LikeType {
-    BOARD("boards"),
+    BOARD("newsfeeds"),
     COMMENT("comments");
 
     private final String targetLikeType;
@@ -24,6 +26,6 @@ public enum LikeType {
                 return likeType;
             }
         }
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 접근입니다.");
+        throw new CustomException(ErrorCode.LIKETYPE_NOT_FOUND);
     }
 }
