@@ -85,12 +85,17 @@ public class BoardService {
     // newsfeedsId와 일치하는 board 단건 조회
     Board findBoard = boardRepository.findByIdOrElseThrow(newsfeedsId);
 
+    // 해당 게시물의 좋아요 수 카운트 해오기
     Long countBoardLike = likeRepository.countByTargetIdAndLikeTargetType(findBoard.getId(), changeType("newsfeeds"));
 
-    List<Long> commentIdList = commentRepository.findAllByBoardId(findBoard.getId()).stream().map(comment -> comment.getId()).toList();
+    // newsfeedsId와 일치하는 board에 연결된 comment의 id 가져오기
+    List<Long> commentIdList =
+        commentRepository.findAllByBoardId(findBoard.getId())
+            .stream()
+            .map(comment -> comment.getId())
+            .toList();
 
-//    List<Object[]> commentLikeList = likeRepository.countLikesByTargetIdInAndLikeTargetType(commentIdList, changeType("comments"));
-
+    // comment id로 정렬된 해당 댓글의 좋아요 카운트
     Map<Long, Long> commentLikeMap = likeRepository.countLikeByTargetIdInAndLikeTargetType(commentIdList, changeType("comments"))
         .stream()
         .collect(Collectors.toMap(
@@ -98,7 +103,7 @@ public class BoardService {
             row -> (Long) row[1]  // likeCount
         ));
 
-    // board와 연결된 commentList 가져오기
+    // board와 연결된 commentList 가져오기 -> commentLikeMap에 일치하는 Id 가 있으면 카운트된 좋아요 수를 likeCount에 넣고 아니면 0 넣음
     List<CommentResponseDto> commentList = findBoard
         .getCommentList()
         .stream()
