@@ -2,6 +2,8 @@ package org.example.newsfeed.repository;
 
 import java.util.Optional;
 
+import org.example.newsfeed.common.exception.CustomException;
+import org.example.newsfeed.common.exception.ErrorCode;
 import org.example.newsfeed.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.HttpStatus;
@@ -13,10 +15,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	Optional<User> findByEmail(String email);
 
 	default User findByEmailOrElseThrow(String email) {
-		return findByEmail(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, email + "은 존재하지 않습니다."));
+		return findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+	}
+
+	default User findByNicknameOrElseThrow(String nickname) {
+		return findByNickname(nickname).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 	}
 
 	default User findByIdOrElseThrow(Long id) {
-		return findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 id : " + id));
+		return findById(id).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 	}
 }
