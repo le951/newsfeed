@@ -5,7 +5,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.dto.board.BoardDetailResponseDto;
 import org.example.newsfeed.dto.board.BoardListDto;
-import org.example.newsfeed.dto.board.BoardPagingDto;
 import org.example.newsfeed.dto.board.BoardRequestDto;
 import org.example.newsfeed.dto.board.BoardResponseDto;
 import org.example.newsfeed.dto.comment.CommentResponseDto;
@@ -17,9 +16,7 @@ import org.example.newsfeed.repository.BoardRepository;
 import org.example.newsfeed.repository.CommentRepository;
 import org.example.newsfeed.repository.UserRepository;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,11 +84,7 @@ public class BoardService {
 
   // 팔로잉 유저 게시물 조회
   @Transactional(readOnly = true)
-  public Page<BoardListDto> findAllBoardsOfFollowingUsers(BoardPagingDto boardPagingDto, Long userId) {
-
-    Sort sort = Sort.by(Sort.Direction.fromString(boardPagingDto.getSort()), "createdAt");
-
-    Pageable pageable = PageRequest.of(boardPagingDto.getPage(), boardPagingDto.getSize(), sort);
+  public Page<BoardListDto> findAllBoardsOfFollowingUsers(Pageable pageable, Long userId) {
 
     // 로그인 유저 객체 가져옴
     User findUser = userRepository.findByIdOrElseThrow(userId);
@@ -119,10 +112,7 @@ public class BoardService {
 
   // 모든 유저 게시물 조회
   @Transactional(readOnly = true)
-  public Page<BoardListDto> findAllBoardsOfAllUsers(BoardPagingDto boardPagingDto) {
-
-    Sort sort = Sort.by(Sort.Direction.fromString(boardPagingDto.getSort()), "createdAt");
-    Pageable pageable = PageRequest.of(boardPagingDto.getPage(), boardPagingDto.getSize(), sort);
+  public Page<BoardListDto> findAllBoardsOfAllUsers(Pageable pageable) {
 
     Page<Board> boardPages = boardRepository.findAll(pageable);
 

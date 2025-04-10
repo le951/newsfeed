@@ -13,6 +13,9 @@ import org.example.newsfeed.dto.board.BoardRequestDto;
 import org.example.newsfeed.dto.board.BoardResponseDto;
 import org.example.newsfeed.service.BoardService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -85,19 +88,14 @@ public class BoardController {
   @GetMapping("/following")
   public ResponseEntity<Page<BoardListDto>> findAllBoardsOfFollowingUsers(
       HttpServletRequest request,
-      @RequestParam int pageNumber
-//      @PageableDefault(size = 10, sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable
+      @PageableDefault(size = 10, sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable
   ){
 
     Long userId = findUserIdFromToken(request);
 
-    BoardPagingDto boardPagingDto = new BoardPagingDto();
-
-    boardPagingDto.setPage(pageNumber);
-
     Page<BoardListDto> boardPages =
         boardService.findAllBoardsOfFollowingUsers(
-            boardPagingDto,
+            pageable,
             userId
         );
 
@@ -109,14 +107,11 @@ public class BoardController {
   // 게시물 전체 조회 -> 모든 게시물중에서
   @GetMapping("/allusers")
   public Page<BoardListDto> findAllBoardsOfAllUsers(
-      @RequestParam int pageNumber
+      @PageableDefault(size = 10, sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable
   ){
 
-    BoardPagingDto boardPagingDto = new BoardPagingDto();
 
-    boardPagingDto.setPage(pageNumber);
-
-    return boardService.findAllBoardsOfAllUsers(boardPagingDto);
+    return boardService.findAllBoardsOfAllUsers(pageable);
 
   }
 
