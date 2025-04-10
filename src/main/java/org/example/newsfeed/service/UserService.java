@@ -12,7 +12,11 @@ import org.example.newsfeed.dto.user.SignUpResponseDto;
 import org.example.newsfeed.dto.user.UserResponseDto;
 import org.example.newsfeed.entity.DeletedUser;
 import org.example.newsfeed.entity.User;
+import org.example.newsfeed.repository.BoardRepository;
+import org.example.newsfeed.repository.CommentRepository;
 import org.example.newsfeed.repository.DeletedUserRepository;
+import org.example.newsfeed.repository.FollowRepository;
+import org.example.newsfeed.repository.LikeRepository;
 import org.example.newsfeed.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -26,9 +30,13 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
 	private final UserRepository userRepository;
+	private final BoardRepository boardRepository;
+	private final CommentRepository commentRepository;
+	private final LikeRepository likeRepository;
 	private final DeletedUserRepository deletedUserRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtUtil jwtUtil;
+	private final FollowRepository followRepository;
 
 	// 회원가입
 	public SignUpResponseDto signUp(SignUpRequestDto dto) {
@@ -101,6 +109,7 @@ public class UserService {
 	}
 
 	// 회원 탈퇴
+	@Transactional
 	public void delete(Long id, String password) {
 
 		User findUser = userRepository.findByIdOrElseThrow(id);
@@ -110,10 +119,16 @@ public class UserService {
 
 		// 탈퇴 사용자 정보 탈퇴테이블에 백업
 		DeletedUser deletedUser = new DeletedUser(findUser, LocalDateTime.now());
-
-
 		deletedUserRepository.save(deletedUser);
 
+		// 좋아요 삭제
+		likeRepository.deleteAllByUserId(id);
+		// 팔로우 관계 삭제 (내가 팔로우한 사람 + 나를 팔로우한 사람)
+		followRepository.deleteAllByFromUserIdOrToUserId(id, id);
+		// 게시글 삭제
+		boardRepository.deleteAllByUserId(id);
+		// 댓글 삭제
+		commentRepository.deleteAllByUserId(id);
 		// 회원 삭제
 		userRepository.delete(findUser);
 	}

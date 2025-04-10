@@ -14,4 +14,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     }
 
     List<Comment> findAllByBoardId(Long boardId);
+
+	// 회원 탈퇴 시 회원의 게시글 전체 삭제
+	void deleteAllByUserId(Long	userId);
 }
