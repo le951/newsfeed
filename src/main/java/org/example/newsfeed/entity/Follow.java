@@ -16,13 +16,17 @@ public class Follow {
     private Long id;
 
     @ManyToOne
-    private User follower;
+    // 팔로우 받는 사람
+    private User toUser;
+    // private User follower;
 
     @ManyToOne
-    private User following;
+    // 팔로우 하는 사람
+    private User fromUser;
+    // private User following;
 
-    public Follow(User follower, User following) {
-        this.follower = follower;
-        this.following = following;
+    public Follow(User toUser, User fromUser) {
+        this.toUser = toUser;
+        this.fromUser = fromUser;
     }
 }
