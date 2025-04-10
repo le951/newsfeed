@@ -117,7 +117,6 @@ public class BoardController {
 
   }
 
-  // 좋아요 찍힌 게시물만 좋아요 많은 순으로 조회(엄격)
 
   // 게시물 삭제
   @DeleteMapping("/{newsfeedsId}")
