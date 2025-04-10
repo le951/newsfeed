@@ -34,7 +34,13 @@ public enum ErrorCode {
     //comment
     COMMENT_NOT_FOUND(404,"Not Found","CM001","댓글을 찾을 수 없습니다"),
     UNAUTHORIZED_COMMENT_UPDATE(403,"Forbidden","CM002","댓글 작성자만 댓글을 수정할 수 있습니다."),
-    UNAUTHORIZED_COMMENT_DELETE(403,"Forbidden","CM003","댓글 작성자 혹은 게시글 작성자만 댓글을 삭제할 수 있습니다.");
+    UNAUTHORIZED_COMMENT_DELETE(403,"Forbidden","CM003","댓글 작성자 혹은 게시글 작성자만 댓글을 삭제할 수 있습니다."),
+
+    //like
+    LIKETYPE_NOT_FOUND(404,"Not Found","L001","Not found Like Type"),
+    ALREADY_LIKED(400, "Bad Request", "L002", "Already like it"),
+    NOT_LIKED(400, "Bad Request", "L003", "Not Liked");
+
 
     private final int status;
     private final String error;
