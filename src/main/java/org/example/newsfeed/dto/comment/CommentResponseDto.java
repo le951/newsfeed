@@ -11,9 +11,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CommentResponseDto {
 
+    //좋아요id, 작성자 닉네임, 댓글내용, 생성일, 좋아요 수
     private final Long id;
-
-    private final Long boardId;
 
     private final String nickname;
 
@@ -22,13 +21,15 @@ public class CommentResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private final LocalDateTime createdAt;
 
-    public static CommentResponseDto toDto(Comment comment) {
+    private final Long likeCount;
+
+    public static CommentResponseDto toDto(Comment comment,Long likeCount) {
         return new CommentResponseDto(
                 comment.getId(),
-                comment.getBoard().getId(),
                 comment.getUser().getNickname(),
                 comment.getComments(),
-                comment.getCreatedAt()
+                comment.getCreatedAt(),
+                likeCount
         );
     }
 }
