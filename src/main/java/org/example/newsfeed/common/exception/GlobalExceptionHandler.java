@@ -20,9 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@RestControllerAdvice
+@RestControllerAdvice // 글로벌 예외 컨트롤러
 public class GlobalExceptionHandler {
 
+    // 커스텀 예외 처리
     @ExceptionHandler(CustomException.class)
     protected ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
 
@@ -32,6 +33,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.valueOf(errorCode.getStatus()));
     }
 
+    // valid 예외 처리
+    // 컨트롤러에서 개별적으로 처리하지 않은 경우 여기서 처리
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error("MethodArgumentNotValidException: {}", e.getMessage());
@@ -40,6 +43,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    // Repository(JPA) 계층 예외 처리 - EntityNotFoundException 처리
     @ExceptionHandler(EntityNotFoundException.class)
     protected ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException e) {
         log.error("EntityNotFoundException: {}", e.getMessage());
@@ -47,6 +51,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
+    // Repository(JPA) 계층 예외 처리 - DataAccessException 처리
     @ExceptionHandler(DataAccessException.class)
     protected ResponseEntity<ErrorResponse> handleDataAccessException(DataAccessException e) {
         log.error("DataAccessException: {}", e.getMessage());
@@ -54,6 +59,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    // 지원하지 않는 HTTP 메소드 호출 시 발생하는 예외 처리
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     protected ResponseEntity<ErrorResponse> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         log.error("HttpRequestMethodNotSupportedException: {}", e.getMessage());
@@ -61,6 +67,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.METHOD_NOT_ALLOWED);
     }
 
+    // 요청 파라미터 타입 불일치 예외 처리
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     protected ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentTypeMismatchException e) {
         log.error("MethodArgumentTypeMismatchException: {}", e.getMessage());
@@ -68,6 +75,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    // 필수 요청 파라미터 누락 예외 처리
     @ExceptionHandler(MissingServletRequestParameterException.class)
     protected ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
         log.error("MissingServletRequestParameterException: {}", e.getMessage());
@@ -75,6 +83,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    // JSON 파싱 오류 등의 예외 처리
     @ExceptionHandler(HttpMessageNotReadableException.class)
     protected ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         log.error("HttpMessageNotReadableException: {}", e.getMessage());
@@ -82,6 +91,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    // Bean Validation 관련 예외 처리
     @ExceptionHandler(BindException.class)
     protected ResponseEntity<ErrorResponse> handleBindException(BindException e) {
         log.error("BindException: {}", e.getMessage());
@@ -89,6 +99,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    // 그 외 모든 예외 처리
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ErrorResponse> handleException(Exception e) {
         log.error("Exception: {}", e.getMessage());
@@ -96,6 +107,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    // BindingResult 에서 발생한 필드 에러 목록을 ErrorResponse.FieldError 목록으로 반환
     private List<ErrorResponse.FieldError> processFieldErrors(BindingResult bindingResult) {
         List<ErrorResponse.FieldError> fieldErrors = new ArrayList<>();
 
