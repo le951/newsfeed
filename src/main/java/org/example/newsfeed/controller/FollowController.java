@@ -29,11 +29,8 @@ public class FollowController {
         String email = requestDto.getEmail();
         String nickname = requestDto.getNickname();
 
-        // jwt 토큰에서 userId 정보를 가져옴
-        Long userId = (Long) servletRequest.getAttribute("userId");
-
-        // userId가 NULL 값이 아닌지 확인
-        checkedLogin(userId);
+        // 로그인 상태 체크 및 로그인된 userId 가져옴
+        Long userId = checkedLoginAndGetUserId(servletRequest);
 
         // 이메일과 닉네임으로 상대방(팔로우 받는 사람)의 유저 정보를 가져옴
         UserResponseDto findUser = checkEmailOrNickname(nickname, email);
@@ -55,11 +52,8 @@ public class FollowController {
         String email = requestDto.getEmail();
         String nickname = requestDto.getNickname();
 
-        // jwt 토큰에서 userId 정보를 가져옴
-        Long userId = (Long) servletRequest.getAttribute("userId");
-
-        // userId가 NULL 값이 아닌지 확인
-        checkedLogin(userId);
+        // 로그인 상태 체크 및 로그인된 userId 가져옴
+        Long userId = checkedLoginAndGetUserId(servletRequest);
 
         // 이메일과 닉네임으로 상대방(언팔로우 받는 사람)의 유저 정보를 가져옴
         UserResponseDto findUser = checkEmailOrNickname(nickname, email);
@@ -78,11 +72,8 @@ public class FollowController {
         String email = requestDto.getEmail();
         String nickname = requestDto.getNickname();
 
-        // jwt 토큰에서 userId 정보를 가져옴
-        Long userId = (Long) servletRequest.getAttribute("userId");
-
-        // userId가 NULL 값이 아닌지 확인
-        checkedLogin(userId);
+        // 로그인 상태 체크 및 로그인된 userId 가져옴
+        Long userId = checkedLoginAndGetUserId(servletRequest);
 
         // 이메일과 닉네임으로 상대방(언팔로우 받는 사람)의 유저 정보를 가져옴
         UserResponseDto findUser = checkEmailOrNickname(nickname, email);
@@ -111,9 +102,17 @@ public class FollowController {
     }
 
     // 현재 userId값이 Null 값인지 확인후 Null 값이면 예외 처리
-    public void checkedLogin(Long userId) {
+    public Long checkedLoginAndGetUserId(HttpServletRequest servletRequest) {
+
+        // userId를 가져옴
+        Long userId = (Long) servletRequest.getAttribute("userId");
+
+        // Null값인지 검사
         if (userId == null) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
+
+        // 반환
+        return userId;
     }
 }
