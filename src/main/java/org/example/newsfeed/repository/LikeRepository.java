@@ -20,4 +20,7 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
         @Param("targetIds") List<Long> targetIds,
         @Param("targetType") LikeType targetType);
 
+
+	// 회원탈퇴시 해당 유저 종아요 삭제
+	void deleteAllByUserId(Long userId);
 }

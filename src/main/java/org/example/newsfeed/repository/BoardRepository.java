@@ -35,5 +35,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
   // 리스트 안에 있는 모든 값과 일치하는 board
   Page<Board> findAllByUserIdIn(List<Long> followerIds, Pageable pageable);
+
+  // 회원탈퇴 시 회원 댓글 모두 삭제
+  void deleteAllByUserId(Long userId);
 }
 

@@ -54,8 +54,7 @@ public class UserController {
 	// 비밀번호 변경 (JWT 인증 필요)
 	@PatchMapping("/password")
 	public ResponseEntity<String> updatePassword(@Valid @RequestBody UpdatePasswordRequestDto dto, HttpServletRequest servletRequest) {
-		Long userId = (Long) servletRequest.getAttribute("userId");
-		checkedLogin(userId);
+		Long userId = checkedLoginAndGetUserId(servletRequest);
 		userService.updatePassword(userId, dto.getOldPassword(), dto.getNewPassword());
 		return new ResponseEntity<>("비밀번호 변경완료", HttpStatus.OK);
 	}
@@ -63,8 +62,7 @@ public class UserController {
 	// 닉네임 변경 (JWT 인증 필요)
 	@PatchMapping("/nickname")
 	public ResponseEntity<String> updateNickname(@Valid @RequestBody UpdateNicknameRequestDto dto, HttpServletRequest servletRequest) {
-		Long userId = (Long) servletRequest.getAttribute("userId");
-		checkedLogin(userId);
+		Long userId = checkedLoginAndGetUserId(servletRequest);
 		userService.updateNickname(userId, dto.getNickname());
 		return new ResponseEntity<>("닉네임 변경완료", HttpStatus.OK);
 	}
@@ -72,8 +70,7 @@ public class UserController {
 	// 회원 탈퇴 (JWT 인증 필요)
 	@DeleteMapping
 	public ResponseEntity<String> deleteUser(@RequestBody DeleteUserRequestDto dto, HttpServletRequest servletRequest) {
-		Long userId = (Long) servletRequest.getAttribute("userId");
-		checkedLogin(userId);
+		Long userId = checkedLoginAndGetUserId(servletRequest);
 		userService.delete(userId, dto.getPassword());
 		return new ResponseEntity<>("삭제 완료", HttpStatus.OK);
 	}
@@ -83,5 +80,20 @@ public class UserController {
 		if (userId == null) {
 			throw new CustomException(ErrorCode.USER_NOT_FOUND);
 		}
+	}
+
+	// 현재 userId값이 Null 값인지 확인후 Null 값이면 예외 처리
+	public Long checkedLoginAndGetUserId(HttpServletRequest servletRequest) {
+
+		// userId를 가져옴
+		Long userId = (Long) servletRequest.getAttribute("userId");
+
+		// Null값인지 검사
+		if (userId == null) {
+			throw new CustomException(ErrorCode.USER_NOT_FOUND);
+		}
+
+		// 반환
+		return userId;
 	}
 }
