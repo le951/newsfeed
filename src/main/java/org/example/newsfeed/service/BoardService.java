@@ -49,9 +49,9 @@ public class BoardService {
 
   // 게시물 수정
   @Transactional
-  public BoardResponseDto updateBoard(Long userId, Long boardId, BoardRequestDto requestDto) {
+  public BoardResponseDto updateBoard(Long userId, Long newsfeedsId, BoardRequestDto requestDto) {
     // 로그인 유저의 해당 게시물 찾아오기
-    Board findBoard = boardRepository.findByUserIdAndIdOrElseThrow(userId, boardId);
+    Board findBoard = boardRepository.findByUserIdAndIdOrElseThrow(userId, newsfeedsId);
 
     // 업데이트
     findBoard.updateBoard(
@@ -69,8 +69,8 @@ public class BoardService {
   }
 
   // 게시물 단건 조회
-  public BoardDetailResponseDto findBoardById(Long boardId) {
-    Board findBoard = boardRepository.findByIdOrElseThrow(boardId);
+  public BoardDetailResponseDto findBoardById(Long newsfeedsId) {
+    Board findBoard = boardRepository.findByIdOrElseThrow(newsfeedsId);
 
     List<CommentResponseDto> commentList = findBoard.getCommentList().stream().map(CommentResponseDto::toDto).toList();
 
@@ -137,8 +137,8 @@ public class BoardService {
 
   // 게시물 삭제
   @Transactional
-  public void deleteBoard(Long userId, Long boardId) {
-    Board findBoard = boardRepository.findByUserIdAndIdOrElseThrow(userId, boardId);
+  public void deleteBoard(Long userId, Long newsfeedsId) {
+    Board findBoard = boardRepository.findByUserIdAndIdOrElseThrow(userId, newsfeedsId);
 
     List<Comment> findComment = commentRepository.findAllByBoardId(findBoard.getId());
 

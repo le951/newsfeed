@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/boards")
+@RequestMapping("/newsfeeds")
 @RequiredArgsConstructor
 public class BoardController {
 
@@ -46,13 +46,13 @@ public class BoardController {
     Long userId = findUserIdFromToken(request);
     BoardResponseDto boardResponseDto = boardService.saveBoard(userId, requestDto);
 
-    return new ResponseEntity<>(HttpStatus.CREATED);
+    return new ResponseEntity<>(boardResponseDto,HttpStatus.CREATED);
   }
 
   // 게시물 수정
-  @PatchMapping("/{boardId}")
+  @PatchMapping("/{newsfeedsId}")
   public ResponseEntity<BoardResponseDto> updateBoard(
-      @PathVariable Long boardId,
+      @PathVariable Long newsfeedsId,
       @Valid @RequestBody BoardRequestDto requestDto,
       HttpServletRequest request
   ){
@@ -62,7 +62,7 @@ public class BoardController {
     BoardResponseDto boardResponseDto =
         boardService.updateBoard(
             userId,
-            boardId,
+            newsfeedsId,
             requestDto
         );
 
@@ -71,12 +71,12 @@ public class BoardController {
 
 
   // 게시물 단건 조회
-  @GetMapping("/{boardId}")
+  @GetMapping("/{newsfeedsId}")
   public ResponseEntity<BoardDetailResponseDto> findBoardById(
-      @PathVariable Long boardId
+      @PathVariable Long newsfeedsId
   ){
 
-    BoardDetailResponseDto findBoard = boardService.findBoardById(boardId);
+    BoardDetailResponseDto findBoard = boardService.findBoardById(newsfeedsId);
 
     return new ResponseEntity<>(findBoard,HttpStatus.OK);
 
@@ -114,15 +114,15 @@ public class BoardController {
   }
 
   // 게시물 삭제
-  @DeleteMapping("/{boardId}")
+  @DeleteMapping("/{newsfeedsId}")
   public ResponseEntity<Void> deleteBoard(
       HttpServletRequest request,
-      @PathVariable Long boardId
+      @PathVariable Long newsfeedsId
   ){
 
     Long userId = findUserIdFromToken(request);
 
-    boardService.deleteBoard(userId,boardId);
+    boardService.deleteBoard(userId,newsfeedsId);
 
     return new ResponseEntity<>(HttpStatus.OK);
   }
