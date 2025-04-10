@@ -7,9 +7,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public class FollowResponseDto {
 
-    private final Long follower_id;
+    private final Long toUserId;
 
-    private final Long following_id;
+    private final Long fromUserId;
 
     private final String message;
 

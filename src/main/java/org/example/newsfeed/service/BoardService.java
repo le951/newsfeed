@@ -90,17 +90,17 @@ public class BoardService {
     User findUser = userRepository.findByIdOrElseThrow(userId);
 
     // 로그인 유저의 팔로잉 리스트 가져오기
-    List<Follow> findFollowerList = findUser.getFollowingList();
+    List<Follow> findToUserList = findUser.getFromUserList();
 
     // 팔로잉 리스트의 아이디값 추출
-    List<Long> followerUserIdList = findFollowerList.stream()
+    List<Long> toUserIdList = findToUserList.stream()
         .map(follow ->
-            follow.getFollower()
+            follow.getToUser()
                 .getId()
         ).toList();
 
     // 아이디값에 해당하는 게시물 모두 가져옴
-    Page<Board> boardPages = boardRepository.findAllByUserIdIn(followerUserIdList,pageable);
+    Page<Board> boardPages = boardRepository.findAllByUserIdIn(toUserIdList,pageable);
 
     Page<BoardListDto> boardListDtos = boardPages.map(
         boardPage -> new BoardListDto(boardPage.getUser().getNickname(), boardPage.getTitle(),

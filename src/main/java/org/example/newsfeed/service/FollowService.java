@@ -17,44 +17,44 @@ public class FollowService {
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
 
-    public FollowResponseDto follow(Long followerId, Long FollowingId) {
+    public FollowResponseDto follow(Long toUserId, Long fromUserId) {
 
-        User follower = userRepository.findByIdOrElseThrow(followerId);
-        User following = userRepository.findByIdOrElseThrow(FollowingId);
+        User toUser = userRepository.findByIdOrElseThrow(toUserId);
+        User fromUser = userRepository.findByIdOrElseThrow(fromUserId);
 
-        if (followRepository.existsByFollowerAndFollowing(follower, following)) {
+        if (followRepository.existsByToUserAndFromUser(toUser, fromUser)) {
             throw new CustomException(ErrorCode.ALREADY_FOLLOW);
         }
 
-        Follow follow = new Follow(follower, following);
+        Follow follow = new Follow(toUser, fromUser);
         followRepository.save(follow);
 
-        return new FollowResponseDto(follower.getId(), following.getId(), "팔로우");
+        return new FollowResponseDto(toUser.getId(), fromUser.getId(), "팔로우");
     }
 
-    public void unfollow(Long followerId, Long followingId) {
+    public void unfollow(Long toUserId, Long fromUserId) {
 
-        User follower = userRepository.findByIdOrElseThrow(followerId);
-        User following = userRepository.findByIdOrElseThrow(followingId);
+        User toUser = userRepository.findByIdOrElseThrow(toUserId);
+        User fromUser = userRepository.findByIdOrElseThrow(fromUserId);
 
-        Follow follow = followRepository.findByFollowerAndFollowing(follower, following)
+        Follow follow = followRepository.findByToUserAndFromUser(toUser, fromUser)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOLLOW_USER));
 
         followRepository.delete(follow);
     }
 
-    public String checkFollowBack(Long followerId, Long followingId) {
+    public String checkFollowBack(Long toUserId, Long fromUserId) {
 
-        User follower = userRepository.findByIdOrElseThrow(followerId);
-        User following = userRepository.findByIdOrElseThrow(followingId);
+        User toUser = userRepository.findByIdOrElseThrow(toUserId);
+        User fromUser = userRepository.findByIdOrElseThrow(fromUserId);
 
-        int followerCount = followRepository.countByFollower(follower);
-        int followingCount = followRepository.countByFollowing(following);
+        int toUserCount = followRepository.countByToUser(toUser);
+        int fromUserCount = followRepository.countByFromUser(fromUser);
 
-        if (followRepository.existsByFollowerAndFollowing(follower, following) && followRepository.existsByFollowerAndFollowing(following, follower)) {
-            return "맞팔입니다." + "팔로워 : " + followerCount + "팔로잉 : " + followingCount;
+        if (followRepository.existsByToUserAndFromUser(toUser, fromUser) && followRepository.existsByToUserAndFromUser(toUser, fromUser)) {
+            return "맞팔입니다." + "팔로워 : " + toUserCount + "팔로잉 : " + fromUserCount;
         }
 
-        return "맞팔아님" +"팔로워 : " + followerCount + "팔로잉 : " + followingCount;
+        return "맞팔아님" +"팔로워 : " + toUserCount + "팔로잉 : " + fromUserCount;
     }
 }

@@ -1,17 +1,18 @@
 package org.example.newsfeed.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.common.exception.CustomException;
 import org.example.newsfeed.common.exception.ErrorCode;
 import org.example.newsfeed.dto.follow.FollowResponseDto;
+import org.example.newsfeed.dto.user.UserRequestDto;
 import org.example.newsfeed.dto.user.UserResponseDto;
 import org.example.newsfeed.service.FollowService;
 import org.example.newsfeed.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/follows")
@@ -22,9 +23,10 @@ public class FollowController {
     private final FollowService followService;
 
     @PostMapping
-    public ResponseEntity<FollowResponseDto> followUser(@RequestParam(required = false) String nickname,
-                                                        @RequestParam(required = false) String email,
-                                                        HttpServletRequest servletRequest) {
+    public ResponseEntity<FollowResponseDto> followUser(@Valid @RequestBody UserRequestDto requestDto, HttpServletRequest servletRequest) {
+
+        String email = requestDto.getEmail();
+        String nickname = requestDto.getNickname();
 
         Long userId = (Long) servletRequest.getAttribute("userId");
 
@@ -44,9 +46,10 @@ public class FollowController {
     }
 
     @DeleteMapping
-    public ResponseEntity<String> unfollowUser(@RequestParam(required = false) String nickname,
-                                               @RequestParam(required = false) String email,
-                                               HttpServletRequest servletRequest) {
+    public ResponseEntity<String> unfollowUser(@Valid @RequestBody UserRequestDto requestDto, HttpServletRequest servletRequest) {
+
+        String email = requestDto.getEmail();
+        String nickname = requestDto.getNickname();
 
         Long userId = (Long) servletRequest.getAttribute("userId");
 
@@ -60,9 +63,10 @@ public class FollowController {
     }
 
     @GetMapping
-    public ResponseEntity<String> followBack(@RequestParam(required = false) String nickname,
-                                             @RequestParam(required = false) String email,
-                                             HttpServletRequest servletRequest) {
+    public ResponseEntity<String> followBack(@Valid @RequestBody UserRequestDto requestDto, HttpServletRequest servletRequest) {
+
+        String email = requestDto.getEmail();
+        String nickname = requestDto.getNickname();
 
         Long userId = (Long) servletRequest.getAttribute("userId");
 
@@ -74,22 +78,17 @@ public class FollowController {
     }
 
     public UserResponseDto checkEmailOrNickname(String nickname, String email) {
-
-        UserResponseDto findUser;
-
-        if (nickname != null) {
-            findUser = userService.findByNickname(nickname);
-        } else if (email != null) {
-            findUser = userService.findByEmail(email);
+        if (email != null) {
+            return userService.findByEmail(email);
+        } else if (nickname != null) {
+            return userService.findByNickname(nickname);
         } else {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
-
-        return findUser;
     }
 
-    public void checkNotSelfAction(Long followerId, Long followingId) {
-        if (followerId.equals(followingId)) {
+    public void checkNotSelfAction(Long toUserId, Long fromUserId) {
+        if (toUserId.equals(fromUserId)) {
             throw new CustomException(ErrorCode.ACTION_SELF_ACCOUNT);
         }
     }
