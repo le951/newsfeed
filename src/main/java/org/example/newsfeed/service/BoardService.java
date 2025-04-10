@@ -2,6 +2,8 @@ package org.example.newsfeed.service;
 
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.dto.board.BoardDetailResponseDto;
 import org.example.newsfeed.dto.board.BoardListDto;
@@ -11,9 +13,11 @@ import org.example.newsfeed.dto.comment.CommentResponseDto;
 import org.example.newsfeed.entity.Board;
 import org.example.newsfeed.entity.Comment;
 import org.example.newsfeed.entity.Follow;
+import org.example.newsfeed.entity.LikeType;
 import org.example.newsfeed.entity.User;
 import org.example.newsfeed.repository.BoardRepository;
 import org.example.newsfeed.repository.CommentRepository;
+import org.example.newsfeed.repository.LikeRepository;
 import org.example.newsfeed.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +32,7 @@ public class BoardService {
   private final BoardRepository boardRepository;
   private final UserRepository userRepository;
   private final CommentRepository commentRepository;
+  private final LikeRepository likeRepository;
 
   // 게시물 생성
   public BoardResponseDto saveBoard(Long userId, BoardRequestDto requestDto) {
@@ -80,17 +85,34 @@ public class BoardService {
     // newsfeedsId와 일치하는 board 단건 조회
     Board findBoard = boardRepository.findByIdOrElseThrow(newsfeedsId);
 
+    Long countBoardLike = likeRepository.countByTargetIdAndLikeTargetType(findBoard.getId(), changeType("newsfeeds"));
+
+    List<Long> commentIdList = commentRepository.findAllByBoardId(findBoard.getId()).stream().map(comment -> comment.getId()).toList();
+
+//    List<Object[]> commentLikeList = likeRepository.countLikesByTargetIdInAndLikeTargetType(commentIdList, changeType("comments"));
+
+    Map<Long, Long> commentLikeMap = likeRepository.countLikeByTargetIdInAndLikeTargetType(commentIdList, changeType("comments"))
+        .stream()
+        .collect(Collectors.toMap(
+            row -> (Long) row[0], // commentId
+            row -> (Long) row[1]  // likeCount
+        ));
+
     // board와 연결된 commentList 가져오기
     List<CommentResponseDto> commentList = findBoard
         .getCommentList()
         .stream()
-        .map(CommentResponseDto::toDto)
+        .map(comment -> {
+          Long likeCount = commentLikeMap.getOrDefault(comment.getId(),0L);
+          return CommentResponseDto.toDto(comment,likeCount);
+        } )
         .toList();
 
     return new BoardDetailResponseDto(
         findBoard.getUser().getNickname(),
         findBoard.getTitle(),
         findBoard.getContents(),
+        countBoardLike,
         findBoard.getCreatedAt(),
         commentList
     );
@@ -167,6 +189,10 @@ public class BoardService {
     commentRepository.deleteAll(findComment);
 
     boardRepository.delete(findBoard);
+  }
+
+  public LikeType changeType(String type){
+    return LikeType.strLikeTypeToEnum(type);
   }
 
 

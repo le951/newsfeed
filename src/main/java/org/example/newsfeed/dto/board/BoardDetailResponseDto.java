@@ -20,6 +20,9 @@ public class BoardDetailResponseDto {
   // 게시물 내용
   private final String BoardContents;
 
+  // 게시물 좋아요 수
+  private final Long countBoardLike;
+
   // 게시물 생성일
   private final LocalDateTime BoardCreatedAt;
 
