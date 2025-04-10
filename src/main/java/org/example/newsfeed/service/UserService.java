@@ -85,7 +85,7 @@ public class UserService {
 	public void updateNickname(Long id, String nickname) {
 		User findUser = userRepository.findByIdOrElseThrow(id);
 
-		// 동읾한 닉네임이면 오류 반환
+		// 동일한 닉네임이면 오류 반환
 		if (findUser.getNickname().equals(nickname)) {
 			throw new CustomException(ErrorCode.SAME_NICKNAME);
 		}
@@ -110,6 +110,8 @@ public class UserService {
 
 		// 탈퇴 사용자 정보 탈퇴테이블에 백업
 		DeletedUser deletedUser = new DeletedUser(findUser, LocalDateTime.now());
+
+
 		deletedUserRepository.save(deletedUser);
 
 		// 회원 삭제
