@@ -5,7 +5,10 @@ import jakarta.persistence.*;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @Getter
+@Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "boards")
@@ -21,11 +24,12 @@ public class Board extends BaseEntity{
     @Column(columnDefinition = "text")
     private String contents;
 
+    @Setter
     @ManyToOne
     private User user;
 
     @OneToMany(mappedBy = "board")
-    private List<Comment> CommentList;
+    private List<Comment> commentList;
 
     public Board(String title, String contents){
         this.title = title;
@@ -38,7 +42,4 @@ public class Board extends BaseEntity{
     }
 
 
-    public void setUser(User user){
-        this.user = user;
-    }
 }
