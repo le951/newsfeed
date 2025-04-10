@@ -30,69 +30,89 @@ public class UserService {
 	private final PasswordEncoder passwordEncoder;
 	private final JwtUtil jwtUtil;
 
+	// 회원가입
 	public SignUpResponseDto signUp(SignUpRequestDto dto) {
 
+		// 비밀번호 암호화
 		String encodePassword = passwordEncoder.encode(dto.getPassword());
 
+		// User 엔티티 생성 및 저장
 		User user = new User(dto.getNickname(), dto.getEmail(), encodePassword, dto.getBirth());
 		User savedUser = userRepository.save(user);
 		return new SignUpResponseDto(savedUser.getNickname(), savedUser.getEmail());
 	}
 
+	// 로그인: 이메일/비밀번호 확인 후 JWT 토큰 발급
 	public String login(String email, String password) {
+
 		User findUser = userRepository.findByEmailOrElseThrow(email);
+
+		// 비밀번호 일치 확인
 		if (!passwordEncoder.matches(password, findUser.getPassword())) {
 			throw new CustomException(ErrorCode.PASSWORD_NOT_MATCHED);
 		}
+
+		// JWT 토큰 생성 및 반환
 		return jwtUtil.generateAccessToken(findUser.getId(), findUser.getNickname(), findUser.getEmail());
 	}
 
+	// 닉네임으로 사용자 조회
 	public UserResponseDto findByNickname(String nickname) {
 		User findUser = userRepository.findByNicknameOrElseThrow(nickname);
 		return new UserResponseDto(findUser.getId(), findUser.getNickname(), findUser.getEmail());
 	}
 
+	// 이메일로 사용자 조회
 	public UserResponseDto findByEmail(String email) {
 		User findUser = userRepository.findByEmailOrElseThrow(email);
 		return new UserResponseDto(findUser.getId(), findUser.getNickname(), findUser.getEmail());
 	}
 
+	// 비밀번호 수정
 	@Transactional
 	public void updatePassword(Long id, String oldPassword, String newPassword) {
 		User findUser = userRepository.findByIdOrElseThrow(id);
 
+		// 기존 비밀번호 검증
 		checkedPassword(findUser, oldPassword);
 
-		// 새로운 비밀번호 암호화
+		// 새 비밀번호 암호화 및 업데이트
 		String encodeNewPassword = passwordEncoder.encode(newPassword);
-
 		findUser.updatePassword(encodeNewPassword);
 	}
 
+	// 닉네임 수정
 	public void updateNickname(Long id, String nickname) {
 		User findUser = userRepository.findByIdOrElseThrow(id);
 
-		// 이름이 동일하면 종료
+		// 동읾한 닉네임이면 오류 반환
 		if (findUser.getNickname().equals(nickname)) {
 			throw new CustomException(ErrorCode.SAME_NICKNAME);
 		}
 
+		// 닉네임 중복 여부 확인
 		if (userRepository.findByNickname(nickname).isPresent()) {
 			throw new CustomException(ErrorCode.NICKNAME_DUPLICATION);
 		}
 
+		// 닉네임 업데이트 후 저장
 		findUser.updateNickname(nickname);
 		userRepository.save(findUser);
 	}
 
+	// 회원 탈퇴
 	public void delete(Long id, String password) {
+
 		User findUser = userRepository.findByIdOrElseThrow(id);
 
+		// 비밀번호 검증
 		checkedPassword(findUser, password);
 
+		// 탈퇴 사용자 정보 탈퇴테이블에 백업
 		DeletedUser deletedUser = new DeletedUser(findUser, LocalDateTime.now());
 		deletedUserRepository.save(deletedUser);
 
+		// 회원 삭제
 		userRepository.delete(findUser);
 	}
 
@@ -101,6 +121,7 @@ public class UserService {
 
 		String userPassword = user.getPassword();
 
+		// 입력된 비밀번호와 저장된 해시값 비교
 		if (!passwordEncoder.matches(password, userPassword)) {
 			throw new CustomException(ErrorCode.PASSWORD_NOT_MATCHED);
 		}

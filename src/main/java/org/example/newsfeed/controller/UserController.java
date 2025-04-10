@@ -26,17 +26,20 @@ public class UserController {
 
 	private final UserService userService;
 
+	// 회원가입
 	@PostMapping("/signup")
 	public ResponseEntity<SignUpResponseDto> createUser(@Valid @RequestBody SignUpRequestDto dto) {
 		return new ResponseEntity<>(userService.signUp(dto), HttpStatus.CREATED);
 	}
 
+	// 로그인 (JWT 토큰 반환)
 	@PostMapping("/login")
 	public ResponseEntity<String> login(@RequestBody LoginRequestDto dto) {
 		String jwt = userService.login(dto.getEmail(), dto.getPassword());
 		return new ResponseEntity<>(jwt, HttpStatus.OK);
 	}
 
+	// 사용자 조회 (이메일 또는 닉네임으로 검색)
 	@GetMapping
 	public ResponseEntity<UserResponseDto> findUser(@Valid @RequestBody UserRequestDto dto) {
 		if (dto.getEmail() != null) {
@@ -48,6 +51,7 @@ public class UserController {
 		}
 	}
 
+	// 비밀번호 변경 (JWT 인증 필요)
 	@PatchMapping("/password")
 	public ResponseEntity<String> updatePassword(@Valid @RequestBody UpdatePasswordRequestDto dto, HttpServletRequest servletRequest) {
 		Long userId = (Long) servletRequest.getAttribute("userId");
@@ -58,6 +62,7 @@ public class UserController {
 		return new ResponseEntity<>("비밀번호 변경완료", HttpStatus.OK);
 	}
 
+	// 닉네임 변경 (JWT 인증 필요)
 	@PatchMapping("/nickname")
 	public ResponseEntity<String> updateNickname(@Valid @RequestBody UpdateNicknameRequestDto dto, HttpServletRequest servletRequest) {
 		Long userId = (Long) servletRequest.getAttribute("userId");
@@ -68,6 +73,7 @@ public class UserController {
 		return new ResponseEntity<>("닉네임 변경완료", HttpStatus.OK);
 	}
 
+	// 회원 탈퇴 (JWT 인증 필요)
 	@DeleteMapping
 	public ResponseEntity<String> deleteUser(@RequestBody DeleteUserRequestDto dto, HttpServletRequest servletRequest) {
 		Long userId = (Long) servletRequest.getAttribute("userId");
