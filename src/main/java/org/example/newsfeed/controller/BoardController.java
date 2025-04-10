@@ -36,7 +36,6 @@ public class BoardController {
 
   // token 사용해서 로그인한 경우
   // 게시물 생성 로직
-  // 필터에서 토큰 검증이 있다는 가정하에 토큰 검증 진행 x
   @PostMapping
   public ResponseEntity<BoardResponseDto> saveBoard(
       @RequestBody BoardRequestDto requestDto,
@@ -84,9 +83,10 @@ public class BoardController {
 
   // 게시물 전체 조회 -> 팔로우 한사람들만(구독중인 채널 가져오기 같은 느낌)
   @GetMapping("/following")
-  public Page<BoardListDto> findAllBoardsOfFollowingUsers(
-      @RequestParam int pageNumber,
-      HttpServletRequest request
+  public ResponseEntity<Page<BoardListDto>> findAllBoardsOfFollowingUsers(
+      HttpServletRequest request,
+      @RequestParam int pageNumber
+//      @PageableDefault(size = 10, sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable
   ){
 
     Long userId = findUserIdFromToken(request);
@@ -95,9 +95,16 @@ public class BoardController {
 
     boardPagingDto.setPage(pageNumber);
 
-    return boardService.findAllBoardsOfFollowingUsers(boardPagingDto, userId);
+    Page<BoardListDto> boardPages =
+        boardService.findAllBoardsOfFollowingUsers(
+            boardPagingDto,
+            userId
+        );
+
+    return new ResponseEntity<>(boardPages, HttpStatus.OK);
 
   }
+
 
   // 게시물 전체 조회 -> 모든 게시물중에서
   @GetMapping("/allusers")
@@ -128,10 +135,12 @@ public class BoardController {
   }
 
 
+  // 토큰에서 userId 값 가져오기
   public Long findUserIdFromToken(HttpServletRequest request){
 
     Long userId = (Long) request.getAttribute("userId");
 
+    // 유저 아이디가 비어 있다면 USER_NOT_FOUND 에러 발생
     if (userId == null) {
       throw new CustomException(ErrorCode.USER_NOT_FOUND);
     }
