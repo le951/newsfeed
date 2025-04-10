@@ -23,7 +23,7 @@ public enum ErrorCode {
     SAME_NICKNAME(400, "Bad Request", "U006", "Cannot update to the same nickname."),
     UNAUTHORIZED_USER(401, "Unauthorized", "U007", "Login is required."),
 
-    // Follow,
+    // Follow
     ACTION_SELF_ACCOUNT(400, "Bad Request", "F001", "Can't Self Action"),
     ALREADY_FOLLOW(400, "Bad Request", "F002", "Already Followed User"),
     NOT_FOLLOW_USER(400, "Bad Request", "F003", "Not Follow User"),
