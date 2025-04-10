@@ -1,5 +1,7 @@
 package org.example.newsfeed.controller;
 
+import org.example.newsfeed.common.exception.CustomException;
+import org.example.newsfeed.common.exception.ErrorCode;
 import org.example.newsfeed.dto.user.DeleteUserRequestDto;
 import org.example.newsfeed.dto.user.UserRequestDto;
 import org.example.newsfeed.dto.user.LoginRequestDto;
@@ -42,7 +44,7 @@ public class UserController {
 		} else if (dto.getNickname() != null) {
 			return new ResponseEntity<>(userService.findByNickname(dto.getNickname()), HttpStatus.OK);
 		} else {
-			return ResponseEntity.badRequest().build();
+			throw new CustomException(ErrorCode.EMPTY_EMAIL_OR_NICKNAME);
 		}
 	}
 
@@ -50,7 +52,7 @@ public class UserController {
 	public ResponseEntity<String> updatePassword(@Valid @RequestBody UpdatePasswordRequestDto dto, HttpServletRequest servletRequest) {
 		Long userId = (Long) servletRequest.getAttribute("userId");
 		if (userId == null) {
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+			throw new CustomException(ErrorCode.UNAUTHORIZED_USER);
 		}
 		userService.updatePassword(userId, dto.getOldPassword(), dto.getNewPassword());
 		return new ResponseEntity<>("비밀번호 변경완료", HttpStatus.OK);
@@ -60,7 +62,7 @@ public class UserController {
 	public ResponseEntity<String> updateNickname(@Valid @RequestBody UpdateNicknameRequestDto dto, HttpServletRequest servletRequest) {
 		Long userId = (Long) servletRequest.getAttribute("userId");
 		if (userId == null) {
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+			throw new CustomException(ErrorCode.UNAUTHORIZED_USER);
 		}
 		userService.updateNickname(userId, dto.getNickname());
 		return new ResponseEntity<>("닉네임 변경완료", HttpStatus.OK);
@@ -70,9 +72,9 @@ public class UserController {
 	public ResponseEntity<String> deleteUser(@RequestBody DeleteUserRequestDto dto, HttpServletRequest servletRequest) {
 		Long userId = (Long) servletRequest.getAttribute("userId");
 		if (userId == null) {
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+			throw new CustomException(ErrorCode.UNAUTHORIZED_USER);
 		}
 		userService.delete(userId, dto.getPassword());
-		return new ResponseEntity<>(HttpStatus.OK);
+		return new ResponseEntity<>("삭제 완료", HttpStatus.OK);
 	}
 }

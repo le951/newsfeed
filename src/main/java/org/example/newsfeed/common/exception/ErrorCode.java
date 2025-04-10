@@ -18,8 +18,12 @@ public enum ErrorCode {
     EMAIL_DUPLICATION(400, "Bad Request", "U001", "Email is Duplicated"),
     NICKNAME_DUPLICATION(400, "Bad Request", "U002", "NickName is Duplicated"),
     USER_NOT_FOUND(404, "Not Found", "U003", "User Not Found"),
+    EMPTY_EMAIL_OR_NICKNAME(400, "Bad Request", "U004", "Email or Nickname is Empty"),
+    PASSWORD_NOT_MATCHED(400, "Bad Request", "U005", "Password do not match"),
+    SAME_NICKNAME(400, "Bad Request", "U006", "Cannot update to the same nickname."),
+    UNAUTHORIZED_USER(401, "Unauthorized", "U007", "Login is required."),
 
-    // Follow
+    // Follow,
     ACTION_SELF_ACCOUNT(400, "Bad Request", "F001", "Can't Self Action"),
     ALREADY_FOLLOW(400, "Bad Request", "F002", "Already Followed User"),
     NOT_FOLLOW_USER(400, "Bad Request", "F003", "Not Follow User"),

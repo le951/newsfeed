@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.example.newsfeed.common.config.PasswordEncoder;
+import org.example.newsfeed.common.exception.CustomException;
+import org.example.newsfeed.common.exception.ErrorCode;
 import org.example.newsfeed.common.jwt.JwtUtil;
 import org.example.newsfeed.dto.user.SignUpRequestDto;
 import org.example.newsfeed.dto.user.SignUpResponseDto;
@@ -40,26 +42,18 @@ public class UserService {
 	public String login(String email, String password) {
 		User findUser = userRepository.findByEmailOrElseThrow(email);
 		if (!passwordEncoder.matches(password, findUser.getPassword())) {
-			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+			throw new CustomException(ErrorCode.PASSWORD_NOT_MATCHED);
 		}
 		return jwtUtil.generateAccessToken(findUser.getId(), findUser.getNickname(), findUser.getEmail());
 	}
 
 	public UserResponseDto findByNickname(String nickname) {
-		Optional<User> optionalUser = userRepository.findByNickname(nickname);
-		if(optionalUser.isEmpty()) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, nickname + "은 존재하지 않는 회원입니다.");
-		}
-		User findUser = optionalUser.get();
+		User findUser = userRepository.findByNicknameOrElseThrow(nickname);
 		return new UserResponseDto(findUser.getId(), findUser.getNickname(), findUser.getEmail());
 	}
 
 	public UserResponseDto findByEmail(String email) {
-		Optional<User> optionalUser = userRepository.findByEmail(email);
-		if(optionalUser.isEmpty()) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, email + "은 존재하지 않는 회원입니다.");
-		}
-		User findUser = optionalUser.get();
+		User findUser = userRepository.findByEmailOrElseThrow(email);
 		return new UserResponseDto(findUser.getId(), findUser.getNickname(), findUser.getEmail());
 	}
 
@@ -80,11 +74,11 @@ public class UserService {
 
 		// 이름이 동일하면 종료
 		if (findUser.getNickname().equals(nickname)) {
-			return;
+			throw new CustomException(ErrorCode.SAME_NICKNAME);
 		}
 
 		if (userRepository.findByNickname(nickname).isPresent()) {
-			throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 사용 중인 닉네임입니다.");
+			throw new CustomException(ErrorCode.NICKNAME_DUPLICATION);
 		}
 
 		findUser.updateNickname(nickname);
@@ -108,7 +102,7 @@ public class UserService {
 		String userPassword = user.getPassword();
 
 		if (!passwordEncoder.matches(password, userPassword)) {
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "잘못된 비밀번호");
+			throw new CustomException(ErrorCode.PASSWORD_NOT_MATCHED);
 		}
 	}
 
