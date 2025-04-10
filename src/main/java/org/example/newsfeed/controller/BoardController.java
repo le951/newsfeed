@@ -5,10 +5,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.common.exception.CustomException;
 import org.example.newsfeed.common.exception.ErrorCode;
-import org.example.newsfeed.common.jwt.JwtUtil;
 import org.example.newsfeed.dto.board.BoardDetailResponseDto;
 import org.example.newsfeed.dto.board.BoardListDto;
-import org.example.newsfeed.dto.board.BoardPagingDto;
 import org.example.newsfeed.dto.board.BoardRequestDto;
 import org.example.newsfeed.dto.board.BoardResponseDto;
 import org.example.newsfeed.service.BoardService;
@@ -25,7 +23,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -35,18 +32,22 @@ import org.springframework.web.bind.annotation.RestController;
 public class BoardController {
 
   private final BoardService boardService;
-  private final JwtUtil jwtUtil;
 
   // token 사용해서 로그인한 경우
   // 게시물 생성 로직
   @PostMapping
   public ResponseEntity<BoardResponseDto> saveBoard(
-      @RequestBody BoardRequestDto requestDto,
-      HttpServletRequest request
+      HttpServletRequest request,
+      @RequestBody BoardRequestDto requestDto
   ){
 
     Long userId = findUserIdFromToken(request);
-    BoardResponseDto boardResponseDto = boardService.saveBoard(userId, requestDto);
+
+    BoardResponseDto boardResponseDto =
+        boardService.saveBoard(
+            userId,
+            requestDto
+        );
 
     return new ResponseEntity<>(boardResponseDto,HttpStatus.CREATED);
   }
@@ -54,9 +55,9 @@ public class BoardController {
   // 게시물 수정
   @PatchMapping("/{newsfeedsId}")
   public ResponseEntity<BoardResponseDto> updateBoard(
+      HttpServletRequest request,
       @PathVariable Long newsfeedsId,
-      @Valid @RequestBody BoardRequestDto requestDto,
-      HttpServletRequest request
+      @Valid @RequestBody BoardRequestDto requestDto
   ){
 
     Long userId = findUserIdFromToken(request);
@@ -88,7 +89,7 @@ public class BoardController {
   @GetMapping("/following")
   public ResponseEntity<Page<BoardListDto>> findAllBoardsOfFollowingUsers(
       HttpServletRequest request,
-      @PageableDefault(size = 10, sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable
+      @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
   ){
 
     Long userId = findUserIdFromToken(request);
@@ -106,12 +107,13 @@ public class BoardController {
 
   // 게시물 전체 조회 -> 모든 게시물중에서
   @GetMapping("/allusers")
-  public Page<BoardListDto> findAllBoardsOfAllUsers(
-      @PageableDefault(size = 10, sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable
+  public ResponseEntity<Page<BoardListDto>> findAllBoardsOfAllUsers(
+      @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
   ){
 
+    Page<BoardListDto> boardPages = boardService.findAllBoardsOfAllUsers(pageable);
 
-    return boardService.findAllBoardsOfAllUsers(pageable);
+    return new ResponseEntity<>(boardPages, HttpStatus.OK);
 
   }
 
