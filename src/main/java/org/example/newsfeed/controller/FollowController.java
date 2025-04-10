@@ -88,8 +88,8 @@ public class FollowController {
         return findUser;
     }
 
-    public void checkNotSelfAction(Long followerId, Long followingId) {
-        if (followerId.equals(followingId)) {
+    public void checkNotSelfAction(Long toUserId, Long fromUserId) {
+        if (toUserId.equals(fromUserId)) {
             throw new CustomException(ErrorCode.ACTION_SELF_ACCOUNT);
         }
     }

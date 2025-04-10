@@ -30,11 +30,11 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private LocalDate birth;
 
-    @OneToMany(mappedBy = "follower")
-    private List<Follow> followerList;
+    @OneToMany(mappedBy = "toUser")
+    private List<Follow> toUserList;
 
-    @OneToMany(mappedBy = "following")
-    private List<Follow> followingList;
+    @OneToMany(mappedBy = "fromUser")
+    private List<Follow> fromUserList;
 
     public User(String nickname, String email, String password, LocalDate birth) {
         this.nickname = nickname;
