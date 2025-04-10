@@ -8,7 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Getter
 public enum LikeType {
-    BOARD("boards"),
+    BOARD("newsfeeds"),
     COMMENT("comments");
 
     private final String targetLikeType;
