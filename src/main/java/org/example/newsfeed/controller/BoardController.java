@@ -117,6 +117,7 @@ public class BoardController {
 
   }
 
+
   // 게시물 삭제
   @DeleteMapping("/{newsfeedsId}")
   public ResponseEntity<Void> deleteBoard(

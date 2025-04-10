@@ -2,6 +2,8 @@ package org.example.newsfeed.service;
 
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.dto.board.BoardDetailResponseDto;
 import org.example.newsfeed.dto.board.BoardListDto;
@@ -11,9 +13,11 @@ import org.example.newsfeed.dto.comment.CommentResponseDto;
 import org.example.newsfeed.entity.Board;
 import org.example.newsfeed.entity.Comment;
 import org.example.newsfeed.entity.Follow;
+import org.example.newsfeed.entity.LikeType;
 import org.example.newsfeed.entity.User;
 import org.example.newsfeed.repository.BoardRepository;
 import org.example.newsfeed.repository.CommentRepository;
+import org.example.newsfeed.repository.LikeRepository;
 import org.example.newsfeed.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +32,7 @@ public class BoardService {
   private final BoardRepository boardRepository;
   private final UserRepository userRepository;
   private final CommentRepository commentRepository;
+  private final LikeRepository likeRepository;
 
   // 게시물 생성
   public BoardResponseDto saveBoard(Long userId, BoardRequestDto requestDto) {
@@ -80,17 +85,39 @@ public class BoardService {
     // newsfeedsId와 일치하는 board 단건 조회
     Board findBoard = boardRepository.findByIdOrElseThrow(newsfeedsId);
 
-    // board와 연결된 commentList 가져오기
+    // 해당 게시물의 좋아요 수 카운트 해오기
+    Long countBoardLike = likeRepository.countByTargetIdAndLikeTargetType(findBoard.getId(), changeType("newsfeeds"));
+
+    // newsfeedsId와 일치하는 board에 연결된 comment의 id 가져오기
+    List<Long> commentIdList =
+        commentRepository.findAllByBoardId(findBoard.getId())
+            .stream()
+            .map(comment -> comment.getId())
+            .toList();
+
+    // comment id로 정렬된 해당 댓글의 좋아요 카운트
+    Map<Long, Long> commentLikeMap = likeRepository.countLikeByTargetIdInAndLikeTargetType(commentIdList, changeType("comments"))
+        .stream()
+        .collect(Collectors.toMap(
+            row -> (Long) row[0], // commentId
+            row -> (Long) row[1]  // likeCount
+        ));
+
+    // board와 연결된 commentList 가져오기 -> commentLikeMap에 일치하는 Id 가 있으면 카운트된 좋아요 수를 likeCount에 넣고 아니면 0 넣음
     List<CommentResponseDto> commentList = findBoard
         .getCommentList()
         .stream()
-        .map(CommentResponseDto::toDto)
+        .map(comment -> {
+          Long likeCount = commentLikeMap.getOrDefault(comment.getId(),0L);
+          return CommentResponseDto.toDto(comment,likeCount);
+        } )
         .toList();
 
     return new BoardDetailResponseDto(
         findBoard.getUser().getNickname(),
         findBoard.getTitle(),
         findBoard.getContents(),
+        countBoardLike,
         findBoard.getCreatedAt(),
         commentList
     );
@@ -167,6 +194,10 @@ public class BoardService {
     commentRepository.deleteAll(findComment);
 
     boardRepository.delete(findBoard);
+  }
+
+  public LikeType changeType(String type){
+    return LikeType.strLikeTypeToEnum(type);
   }
 
 
