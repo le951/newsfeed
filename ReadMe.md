@@ -22,7 +22,7 @@ ORM : ![Static Badge](https://img.shields.io/badge/JPA-FFA500?style=flat)
 4. [디렉토리 구조](#-디렉토리-구조)
 
 # API 명세서
-![API.png](img/API.png)
+![API2.png](img/API2.png)
 
 # ERD
 ![erd.png](img/erd.png)
