@@ -65,8 +65,8 @@ public class FollowController {
         return new ResponseEntity<>("언팔로우", HttpStatus.OK);
     }
 
-    // 일단 맞팔을 확인하고 팔로워와 팔로윙을 하는 사람의 수를 체크하는 기능..
-    @GetMapping
+    // 일단 맞팔을 확인하는 기능..
+    @GetMapping("/back")
     public ResponseEntity<String> followBack(@Valid @RequestBody UserRequestDto requestDto, HttpServletRequest servletRequest) {
 
         String email = requestDto.getEmail();
@@ -81,6 +81,21 @@ public class FollowController {
         String isFollowBack = followService.checkFollowBack(findUser.getId(), userId);
 
         return new ResponseEntity<>(isFollowBack, HttpStatus.OK);
+    }
+    
+    // 상대방의 팔로워와 팔로잉의 수를 확인하는 기능
+    @GetMapping("/count")
+    public ResponseEntity<String> countToUserFollowerAndFollowee(@Valid @RequestBody UserRequestDto requestDto, HttpServletRequest servletRequest) {
+
+        String email = requestDto.getEmail();
+        String nickname = requestDto.getNickname();
+
+        // 로그인 상태 체크 및 로그인된 userId 가져옴
+        Long userId = checkedLoginAndGetUserId(servletRequest);
+
+        String countToUser = followService.countToUserFollowerAndFollowee(userId);
+
+        return new ResponseEntity<>(countToUser, HttpStatus.OK);
     }
 
     // 닉네임과 이메일 값중 존재하는 값으로 유저를 조회후 반환

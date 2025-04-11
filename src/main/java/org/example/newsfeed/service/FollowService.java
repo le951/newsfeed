@@ -56,15 +56,22 @@ public class FollowService {
         User toUser = userRepository.findByIdOrElseThrow(toUserId);
         User fromUser = userRepository.findByIdOrElseThrow(fromUserId);
 
-        // 팔로워, 팔로잉 카운트를 가져옴
-        int toUserFollowerCount = followRepository.countByToUser(toUser);
-        int toUserFollowingCount = followRepository.countByFromUser(toUser);
-
         if (checkFollow(toUser, fromUser) && checkFollow(fromUser, toUser)) {
-            return "맞팔 입니다.   " + "팔로워 : " + toUserFollowerCount + "팔로잉 : " + toUserFollowingCount;
+            return "맞팔 입니다.";
         }
 
-        return "맞팔이 아닙니다.   " +"팔로워 : " + toUserFollowerCount + "팔로잉 : " + toUserFollowingCount;
+        return "맞팔이 아닙니다.";
+    }
+
+    public String countToUserFollowerAndFollowee(Long toUserId) {
+
+        User toUser = userRepository.findByIdOrElseThrow(toUserId);
+
+        // 팔로워, 팔로잉 카운트를 가져옴
+        int toUserFollowingCount = followRepository.countByToUser(toUser);
+        int toUserFollowerCount = followRepository.countByFromUser(toUser);
+
+        return "상대방 팔로워 : " + toUserFollowerCount + "     팔로잉: " + toUserFollowingCount;
     }
 
     // 팔로우인지 확인후 Boolean값 반환
