@@ -32,9 +32,10 @@ public enum ErrorCode {
     BOARD_NOT_FOUND(404, "Not Found", "B001", "Board Not Found"),
 
     //comment
-    COMMENT_NOT_FOUND(404,"Not Found","CM001","댓글을 찾을 수 없습니다"),
-    UNAUTHORIZED_COMMENT_UPDATE(403,"Forbidden","CM002","댓글 작성자만 댓글을 수정할 수 있습니다."),
-    UNAUTHORIZED_COMMENT_DELETE(403,"Forbidden","CM003","댓글 작성자 혹은 게시글 작성자만 댓글을 삭제할 수 있습니다."),
+    COMMENT_NOT_FOUND(404,"Not Found","CM001","Can Not Found Comment"),
+    NOT_ALLOWED_USER(403,"Forbidden","CM002","Not Allowed User"),
+    COMMENT_UPDATE_FORBIDDEN(403,"Forbidden","CM003","Only Comment Author Can Update Comment"),
+    COMMENT_DELETE_FORBIDDEN(403,"Forbidden","CM003","Only Comment Author And NewsFeed Author Can Update Comment"),
 
     //like
     LIKETYPE_NOT_FOUND(404,"Not Found","L001","Not found Like Type"),
