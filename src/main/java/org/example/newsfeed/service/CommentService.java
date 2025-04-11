@@ -3,6 +3,7 @@ package org.example.newsfeed.service;
 import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.common.exception.CustomException;
 import org.example.newsfeed.common.exception.ErrorCode;
+import org.example.newsfeed.dto.comment.CommentMessageResponseDto;
 import org.example.newsfeed.dto.comment.CommentRequestDto;
 import org.example.newsfeed.entity.Board;
 import org.example.newsfeed.entity.Comment;
@@ -23,7 +24,7 @@ public class CommentService {
 
     //댓글 작성 기능
     @Transactional
-    public void saveComment(Long newsfeedsId, Long userId, CommentRequestDto requestDto) {
+    public CommentMessageResponseDto saveComment(Long newsfeedsId, Long userId, CommentRequestDto requestDto) {
 
         //해당 게시글, 작성자 관련 데이터 호출
         User user = userRepository.findByIdOrElseThrow(userId);
@@ -31,12 +32,12 @@ public class CommentService {
 
         Comment comment = new Comment(user, board, requestDto.getComments());
         commentRepository.save(comment);
-
+        return CommentMessageResponseDto.toDto(comment,"댓글 작성 완료");
     }
 
     //댓글 수정 기능
     @Transactional
-    public void updateComment(Long commentId, Long loginUserId, CommentRequestDto requestDto) {
+    public CommentMessageResponseDto updateComment(Long commentId, Long loginUserId, CommentRequestDto requestDto) {
         //id값에 해당하는 댓글 데이터 가져오기
         Comment savedComment = commentRepository.findByIdOrElseThrow(commentId);
 
@@ -46,6 +47,7 @@ public class CommentService {
         }
 
         savedComment.updateComment(requestDto.getComments());
+        return CommentMessageResponseDto.toDto(savedComment,"댓글 수정 완료");
     }
 
     @Transactional

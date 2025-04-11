@@ -3,6 +3,7 @@ package org.example.newsfeed.service;
 import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.common.exception.CustomException;
 import org.example.newsfeed.common.exception.ErrorCode;
+import org.example.newsfeed.dto.like.LikeResponseDto;
 import org.example.newsfeed.entity.Like;
 import org.example.newsfeed.entity.LikeType;
 import org.example.newsfeed.entity.User;
@@ -20,7 +21,7 @@ public class LikeService {
     private final LikeRepository likeRepository;
     private final UserRepository userRepository;
 
-    public String doLike(Long userId, Long targetId, LikeType targetLikeType){
+    public LikeResponseDto doLike(Long userId, Long targetId, LikeType targetLikeType){
 
         User user = userRepository.findByIdOrElseThrow(userId);
         //유저 id,타겟(게시글,댓글)id,타입으로 조회
@@ -29,10 +30,10 @@ public class LikeService {
         if(optionalLike.isEmpty()){
             Like like = new Like(user,targetId,targetLikeType);
             likeRepository.save(like);
-            return "좋아요";
+            return new LikeResponseDto(targetId,targetLikeType, "좋아요");
         } else throw new CustomException(ErrorCode.ALREADY_LIKED);
     }
-    public String unLike(Long userId, Long targetId, LikeType targetLikeType){
+    public LikeResponseDto unLike(Long userId, Long targetId, LikeType targetLikeType){
 
         User user = userRepository.findByIdOrElseThrow(userId);
         //유저 id,타겟(게시글,댓글)id,타입으로 조회
@@ -40,7 +41,7 @@ public class LikeService {
         //해당 게시글에 좋아요를 하지 않았다면 에러 출력
         if(optionalLike.isPresent()){
             likeRepository.delete(optionalLike.get());
-            return "좋아요 취소";
+            return new LikeResponseDto(targetId,targetLikeType, "좋아요 취소");
         }else throw new CustomException(ErrorCode.NOT_LIKED);
     }
 }
