@@ -1,16 +1,17 @@
 package org.example.newsfeed.repository;
 
+import org.example.newsfeed.common.exception.CustomException;
+import org.example.newsfeed.common.exception.ErrorCode;
 import org.example.newsfeed.entity.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
+
 
 import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     default Comment findByIdOrElseThrow(Long id){
         return findById(id)
-                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"존재하지 않는 댓글입니다."));
+                .orElseThrow(()->new CustomException(ErrorCode.COMMENT_NOT_FOUND));
     }
 
     List<Comment> findAllByBoardId(Long boardId);

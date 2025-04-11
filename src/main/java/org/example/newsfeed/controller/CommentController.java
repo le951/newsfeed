@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.newsfeed.common.exception.CustomException;
+import org.example.newsfeed.common.exception.ErrorCode;
 import org.example.newsfeed.common.jwt.JwtUtil;
 import org.example.newsfeed.dto.comment.CommentRequestDto;
 import org.example.newsfeed.service.CommentService;
@@ -22,12 +24,12 @@ public class CommentController {
     @PostMapping("/newsfeeds/{newsfeedsId}/comments")
     public ResponseEntity<String> saveComment(
             @PathVariable Long newsfeedsId,
-            @Valid @RequestBody CommentRequestDto requsetDto,
+            @Valid @RequestBody CommentRequestDto requestDto,
             HttpServletRequest httpServletRequest
     ) {
 
         Long userId = loginCheck(httpServletRequest);
-        commentService.saveComment(newsfeedsId, userId, requsetDto);
+        commentService.saveComment(newsfeedsId, userId, requestDto);
 
         return new ResponseEntity<>("댓글 작성 완료", HttpStatus.CREATED);
     }
@@ -62,7 +64,7 @@ public class CommentController {
     private Long loginCheck(HttpServletRequest httpServletRequest){
         Long userId = (Long)httpServletRequest.getAttribute("userId");
         if(userId == null){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"로그인이 필요합니다.");
+            throw new CustomException(ErrorCode.UNAUTHORIZED_USER);
         }
         return userId;
     }
