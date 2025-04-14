@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "deleted_users")
 public class DeletedUser{
@@ -40,8 +42,15 @@ public class DeletedUser{
     private LocalDateTime updatedAt;
 
     @Column(nullable = false)
-    @CreatedDate
     private LocalDateTime deletedAt;
 
-
+    public DeletedUser(User user, LocalDateTime deletedAt) {
+        this.nickname = user.getNickname();
+        this.email = user.getEmail();
+        this.password = user.getPassword();
+        this.birth = user.getBirth();
+        this.createdAt = user.getCreatedAt();
+        this.updatedAt = user.getUpdatedAt();
+        this.deletedAt = deletedAt;
+    }
 }

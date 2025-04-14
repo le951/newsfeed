@@ -1,0 +1,52 @@
+###
+POST localhost:8080/test-auth/create-user
+Content-Type: application/json
+
+{
+  "nickname": "auth-test-nickname",
+  "password": "pw123123",
+  "email": "authtest@examplleee.com",
+  "birth": "2000-01-01"
+}
+
+###
+POST localhost:8080/users/signup
+Content-Type: application/json
+
+{
+  "nickname": "auth-test-nickname2",
+  "password": "pw123123",
+  "email": "authtes1t@examplleee.com",
+  "birth": "2000-01-01"
+}
+
+###
+POST localhost:8080/test-auth/login
+Content-Type: application/json
+
+{
+  "email" : "authtest@examplleee.com",
+  "password" : "pw123123"
+}
+
+###
+GET localhost:8080/test-auth/JwtValidationQuery?
+    token=eyJhbGciOiJIUzI1NiJ9.eyJuaWNrbmFtZSI6ImF1dGgtdGVzdC1uaWNrbmFtZSIsImlhdCI6MTc0NDExMDMzMiwic3ViIjoiYXV0aHRlc3RAZXhhbXBsbGVlZS5jb20iLCJleHAiOjE3NDQxMTE1MzIsInVzZXJJZCI6MX0.pyKxdw3tvrb2urQmMuX5A-m33Goel8AtpwVuPOKkeOo
+
+### 
+GET localhost:8080/test-auth/JwtValidationHeader
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzQ0MTY1MzAzLCJuaWNrbmFtZSI6Iu2FjOyKpO2KuOunqCIsInVzZXJJZCI6MSwiZXhwIjoxNzQ0MTY2NTAzfQ.Uw-WAxX6UQ-Vu8He3SM9qtVai5M0yxu2jR2uGwx2MX0
+###
+GET localhost:8080/test-auth/JwtProperties
+
+###
+GET localhost:8080/test-auth/JwtFilterTest
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzQ0MTY1MzAzLCJuaWNrbmFtZSI6Iu2FjOyKpO2KuOunqCIsInVzZXJJZCI6MSwiZXhwIjoxNzQ0MTY2NTAzfQ.Uw-WAxX6UQ-Vu8He3SM9qtVai5M0yxu2jR2uGwx2MX0
+###
+
+
+
+
+
+
+

@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -30,4 +30,24 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private LocalDate birth;
 
+    @OneToMany(mappedBy = "toUser")
+    private List<Follow> toUserList;
+
+    @OneToMany(mappedBy = "fromUser")
+    private List<Follow> fromUserList;
+
+    public User(String nickname, String email, String password, LocalDate birth) {
+        this.nickname = nickname;
+        this.email = email;
+        this.password = password;
+        this.birth = birth;
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }
